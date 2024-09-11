@@ -3,6 +3,7 @@
   #' @examples
   #' plot_heat(score_data, "plots/heat_percentiles.png")
   #' @import tidyverse
+  #' @import magrittr  
   #' @export
 
 # Function to load the appropriate DMR file based on EPIC version

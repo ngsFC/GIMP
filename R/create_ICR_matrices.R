@@ -4,6 +4,7 @@
   #' plot_heat(score_data, "plots/heat_percentiles.png")
   #' @import tidyverse
   #' @import valr
+  #' @import magrittr
   #' @export
 
 # Define the function to create df.ICR.cpg and df.ICR
