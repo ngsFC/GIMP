@@ -4,7 +4,14 @@ Version: 0.1.0
 Author: Francesco Cecere <francesco.cecerengs@gmail.com>
 Description: A package for analyzing DNA methylation at imprinted loci
 Depends: R (>= 3.5.0)
-Imports: shiny, tidyverse, ggplot2, dplyr, readr, valr, tidyr
+Imports: 
+shiny,
+tidyverse, 
+ggplot2, 
+dplyr, 
+readr, 
+valr, 
+tidyr
 License: MIT
 Encoding: UTF-8
 LazyData: true
