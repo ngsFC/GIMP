@@ -1,8 +1,3 @@
-# Load required libraries
-library(dplyr)
-library(tidyr)
-library(readr)
-
 # Function to create bedEPIC from EPICv1 or EPICv2
 create_bedEPIC <- function(version = "v1") {
   if (version == "v1") {
@@ -19,7 +14,7 @@ create_bedEPIC <- function(version = "v1") {
   } else if (version == "v2") {
     # File URL and destination path
     url <- "https://github.com/zhou-lab/InfiniumAnnotationV1/raw/main/Anno/EPICv2/EPICv2.hg38.manifest.tsv.gz"
-    destfile <- "data/EPICv2.hg38.manifest.gencode.v41.tsv.gz"
+    destfile <- "EPICv2.hg38.manifest.gencode.v41.tsv.gz"
     
     # Check if the file exists locally, if not, download it
     if (!file.exists(destfile)) {
