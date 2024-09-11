@@ -3,6 +3,8 @@ library(dplyr)
 library(tidyr)
 library(valr)
 library(readr)
+library(tidyverse)
+
 
 # Define the function to create df.ICR.cpg and df.ICR
 create_ICR_matrices <- function(myCombat, bedEPIC_file = "bedEPIC.csv") {

@@ -6,4 +6,4 @@ export(runApp)
 import(shiny)
 import(dplyr)
 import(ggplot2)
-
+import(tidyverse)
