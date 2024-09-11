@@ -3,7 +3,6 @@
   #' @examples
   #' plot_heat(score_data, "plots/heat_percentiles.png")
   #' @import tidyverse
-  #' @import tibble
   #' @export
 
 # Function to create bedEPIC from EPICv1 or EPICv2
