@@ -2,10 +2,14 @@
   #'
   #' @examples
   #' plot_heat(score_data, "plots/heat_percentiles.png")
-  #' @import tidyverse
-  #' @import readr
-  #' @import magrittr
+  #' @importFrom dplyr select mutate rename
+  #' @importFrom magrittr %>%
+  #' @importFrom tibble rownames_to_column
+  #' @importFrom readr read_tsv
   #' @export
+
+
+
 
 # Function to create bedEPIC from EPICv1 or EPICv2
 create_bedEPIC <- function(version = "v1") {
