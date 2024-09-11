@@ -24,34 +24,31 @@ install.packages("devtools")
 install.packages("dplyr")
 install.packages("tidyr")
 install.packages("readr")
+```
 
-Step 2: Install the GIMP package from GitHub
+### Step 2: Install the GIMP package from GitHub
 
-You can install the GIMP package directly from this repository using devtools::install_github():
+You can install the GIMP package directly from this repository using devtools:
 
-r
-
+```r
 # Load devtools
 library(devtools)
 
 # Install the GIMP package from GitHub
 install_github("ngsFC/GIMP")
 
-Step 3: Load the Package
-
-Once installed, you can load the package as follows:
-
-r
-
+# load the package
 library(GIMP)
+```
 
-Usage
+### Usage
+
 1. Loading Imprinting Control Regions (ICRs)
 
 Before analyzing the methylation data, load the DMRs file (ICRs) depending on whether you're working with EPICv1 or EPICv2 data. Here's an example for loading ICRs in your environment:
 
-r
 
+```r
 # For EPICv1
 ICRs <- read.table(system.file("data", "DMRs.hg19.bed", package = "GIMP"), header = FALSE)
 colnames(ICRs) <- c("chrom", "start", "end", "germ", "ICR")
@@ -59,51 +56,37 @@ colnames(ICRs) <- c("chrom", "start", "end", "germ", "ICR")
 # For EPICv2
 ICRs <- read.table(system.file("data", "DMRs.hg38.bed", package = "GIMP"), header = FALSE)
 colnames(ICRs) <- c("chrom", "start", "end", "germ", "ICR")
+```
 
 2. Creating the EPIC Bed File
 
 To create the bed file from the EPICv1 or EPICv2 manifest, run the create_bedEPIC function:
 
-r
-
+```r
 # Create bedEPIC for EPICv1
 bedEPIC <- create_bedEPIC(version = "v1")
 
 # Create bedEPIC for EPICv2
 bedEPIC <- create_bedEPIC(version = "v2")
+```
 
 3. Analyzing Methylation Data
 
 After loading the ICRs and creating the bedEPIC, you can use the function create_ICR_matrices() to analyze your methylation data (e.g., myCombat).
 
-r
-
+```r
 # Example of using the function to create ICR matrices
 result <- create_ICR_matrices(myCombat = your_combat_data)
 
 # Access the data frames
 df.ICR.cpg <- result$df.ICR.cpg
 df.ICR <- result$df.ICR
+```
 
-Contributing
+### Contributing
 
 We welcome contributions! If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
-License
+
+###License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-sql
-
-
-### How to Add the README:
-
-1. **Create or replace the existing README**:
-   - Navigate to your local Git repository.
-   - Save this content in a file called `README.md`.
-
-2. **Commit the new README**:
-
-   ```bash
-   git add README.md
-   git commit -m "Add or update README file"
-   git push origin main
