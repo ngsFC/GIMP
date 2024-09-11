@@ -1,7 +1,7 @@
 # Load required libraries
 library(dplyr)
 library(tidyr)
-library(bedtoolsr)  # Assuming this is the package you're using for bed_intersect
+library(valr)
 library(readr)
 
 # Define the function to create df.ICR.cpg and df.ICR

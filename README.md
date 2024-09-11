@@ -87,6 +87,6 @@ df.ICR <- result$df.ICR
 
 We welcome contributions! If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
 
-###License
+### License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
