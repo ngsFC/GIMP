@@ -2,7 +2,7 @@
   #'
   #' @examples
   #' plot_heat(score_data, "plots/heat_percentiles.png")
-  #' @importFrom dplyr select mutate rename
+  #' @importFrom dplyr select mutate rename relocate
   #' @importFrom magrittr %>%
   #' @importFrom tibble rownames_to_column
   #' @importFrom readr read_tsv
@@ -45,7 +45,7 @@ create_bedEPIC <- function(version = "v1") {
       dplyr::select(CHR, MAPINFO, probeID) %>%
       mutate(end = MAPINFO) %>%
       dplyr::rename(chrom = CHR, start = MAPINFO) %>%
-      relocate(end, .after = start)
+      dplyr::relocate(end, .after = start)
   } else {
     stop("Invalid version. Use 'v1' or 'v2'.")
   }
