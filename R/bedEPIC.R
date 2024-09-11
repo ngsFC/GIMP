@@ -1,3 +1,10 @@
+  #' Create the bed EPIC file
+  #'
+  #' @examples
+  #' plot_heat(score_data, "plots/heat_percentiles.png")
+  #' @import tidyverse
+  #' @export
+
 # Function to create bedEPIC from EPICv1 or EPICv2
 create_bedEPIC <- function(version = "v1") {
   if (version == "v1") {

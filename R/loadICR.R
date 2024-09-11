@@ -1,3 +1,10 @@
+  #' Load the Imprinted DMRs coordinates
+  #'
+  #' @examples
+  #' plot_heat(score_data, "plots/heat_percentiles.png")
+  #' @import tidyverse
+  #' @export
+
 # Function to load the appropriate DMR file based on EPIC version
 load_DMRs <- function(version = "v1") {
   if (version == "v1") {
