@@ -31,8 +31,7 @@ create_bedEPIC <- function(version = "v1") {
     }
     
     # Read and unzip the file
-    EPICv2_manifest <- read_tsv(destfile) %>%
-      as.data.frame()
+    EPICv2_manifest <- read_tsv(destfile)
     
     # Create bedEPIC for EPICv2
     bedEPIC <- as.data.frame(EPICv2_manifest) %>%
