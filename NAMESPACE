@@ -1,6 +1,4 @@
 # Export functions
-export(hello)
-export(runApp)
 
 # Import functions from other packages
 import(shiny)
