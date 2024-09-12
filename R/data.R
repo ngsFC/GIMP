@@ -47,9 +47,9 @@
 #' @keywords datasets
 #'
 #' @examples
-#' data(dmrs19)
-#' head(dmrs19)
-"dmrs19"
+#' data(dmr19)
+#' head(dmr19)
+"dmr19"
 #' Imprinted Regions
 #'
 #' This dataset contains the Human Imprinted regions coordinates in hg38.
@@ -60,6 +60,6 @@
 #' @keywords datasets
 #'
 #' @examples
-#' data(dmrs38)
-#' head(dmrs38)
-"dmrs38"
+#' data(dmr38)
+#' head(dmr38)
+"dmr38"
