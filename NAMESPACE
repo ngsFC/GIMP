@@ -4,8 +4,6 @@ export(bedEPICv1)
 export(bedEPICv2)
 export(bed450k)
 export(create_bedmeth)
-export(DMRs.hg19)
-export(DMRs.hg38)
 # Import functions from other packages
 import(shiny)
 import(tidyverse)
