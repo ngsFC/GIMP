@@ -8,4 +8,3 @@ Imports: shiny,tidyverse,valr,readr
 License: MIT
 Encoding: UTF-8
 LazyData: true
-

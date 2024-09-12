@@ -1,9 +1,9 @@
 # Export functions
 export(create_ICR_matrices)
+export(load_mydata)
 
 # Import functions from other packages
 import(shiny)
 import(tidyverse)
 import(valr)
 import(readr)
-import(data)
