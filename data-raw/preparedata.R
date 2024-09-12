@@ -1,15 +1,17 @@
 # Load required packages
 library(usethis)
 library(devtools)
+library(tidyverse)
 setwd("/media/ciccio/dati/MethArray/GIMP/data-raw")
-#usethis::create_project("/media/ciccio/dati/MethArray/ImpDef")
 
 # Create the data directory if it doesn't exist
 usethis::use_data_raw()
 
 # Read the data
-dmr38 <- read.table("DMRs.hg38.bed", header = TRUE, sep = "\t")
-dmr19 <- read.table("DMRs.hg19.bed", header = TRUE, sep = "\t")
+dmr38 <- read.table("DMRs.hg38.bed", header = F, sep = "\t")
+colnames(dmr38) <- c("chrom", "start", "end", "ICR")
+dmr19 <- read.table("DMRs.hg19.bed", header = F, sep = "\t") %>% dplyr::select(-V4)
+colnames(dmr19) <- c("chrom", "start", "end", "ICR")
 bedEPICv1 <- read.table("bedEPICv1.csv", header = TRUE, sep = ",")
 bedEPICv2 <- read.table("bedEPICv2.csv", header = TRUE, sep = ",")
 bed450k <- read.table("bed450k.csv", header = TRUE, sep = ",")

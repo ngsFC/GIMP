@@ -1,10 +1,10 @@
 Package: GIMP
-Title: Genomic Imprinting methylation analysis 
+Title: Genomic Imprinting Methylation Package 
 Version: 0.1.0
 Author: Francesco Cecere <francesco.cecerengs@gmail.com>
 Description: A package for analyzing DNA methylation at imprinted loci
 Depends: R (>= 3.5.0)
-Imports: shiny,tidyverse,valr,readr
 License: MIT
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.2.3
