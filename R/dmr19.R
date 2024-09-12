@@ -11,4 +11,3 @@
 #' data(dmr19)
 #' head(dmr19)
 "dmr19"
-
