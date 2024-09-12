@@ -10,4 +10,5 @@
 #' @examples
 #' data(bedEPICv1)
 #' head(bedEPICv1)
+#' @export
 "bedEPICv1"

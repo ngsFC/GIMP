@@ -10,4 +10,5 @@
 #' @examples
 #' data(bed450k)
 #' head(bed450k)
+#' @export
 "bed450k"

@@ -10,4 +10,5 @@
 #' @examples
 #' data(dmr38)
 #' head(dmr38)
+#' @export
 "dmr38"
