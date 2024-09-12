@@ -3,10 +3,9 @@ export(create_ICR_matrices)
 export(bedEPICv1)
 export(bedEPICv2)
 export(bed450k)
+export(create_bedmeth)
 export(dmr19)
 export(dmr38)
-export(create_bedmeth)
-
 # Import functions from other packages
 import(shiny)
 import(tidyverse)
