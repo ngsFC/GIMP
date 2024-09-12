@@ -1,10 +1,13 @@
 # Export functions
-export(create_bedEPIC)
 export(create_ICR_matrices)
-export(load_DMRs)
 
 # Import functions from other packages
 import(shiny)
 import(tidyverse)
 import(valr)
 import(readr)
+import(bed450k)
+import(bedEPICv1)
+import(bedEPICv2)
+import(dmr19)
+import(dmr38)
