@@ -1,6 +1,11 @@
 # Export functions
 export(create_ICR_matrices)
-export(load_mydata)
+export(bedEPICv1)
+export(bedEPICv2)
+export(bed450k)
+export(dmr19.R)
+export(dmr38.R)
+export(create_bedmeth)
 
 # Import functions from other packages
 import(shiny)
