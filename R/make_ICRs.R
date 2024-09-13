@@ -57,7 +57,7 @@ make_ICRs <- function(Bmatrix, bedmeth = "v1") {
     full_join(ICRs, by = "ICR") %>%
     mutate(chr = gsub("chr", "", chrom)) %>%
     mutate(chr = as.numeric(chr)) %>%
-    dplyr::arrange(chr, start) %>%
+    dplyr::arrange(across(c(chr, start))) %>%
     column_to_rownames("ICR") %>%
     filter(!is.na(.[[1]])) %>%  # Dynamically filter based on the first column of the grouped data
     dplyr::select(-c("chrom", "start", "end", "germ", "chr")) %>%
