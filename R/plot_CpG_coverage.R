@@ -1,3 +1,9 @@
+#' Plot ICR CPG Matrix
+#'
+#' @examples
+#' plot_CpG_coverage(df_ICR_cpg_counts, bedmeth_version = "v1")
+#' @export
+
 # Function to plot the number of CpGs covered per ICR, comparing df.ICR.cpg with bedmeth
 plot_CpG_coverage <- function(df_ICR_cpg, bedmeth_version = "v1") {
   
@@ -58,3 +64,4 @@ plot_CpG_coverage <- function(df_ICR_cpg, bedmeth_version = "v1") {
   coord_flip()
 
   return(comparison_data)
+}
