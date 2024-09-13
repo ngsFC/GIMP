@@ -2,7 +2,7 @@
 export(make_cpgs)
 export(make_ICRs)
 export(create_bedmeth)
-export(coverage)
+export(plot_CpG_coverage)
 
 # Import functions from other packages
 import(shiny)
