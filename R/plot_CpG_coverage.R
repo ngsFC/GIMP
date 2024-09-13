@@ -1,22 +1,22 @@
 #' Plot ICR CPG Matrix
 #'
 #' @examples
-#' plot_CpG_coverage(df_ICR_cpg_counts, bedmeth_version = "v1")
+#' plot_CpG_coverage(df_ICR_cpg_counts, bedmeth = "v1")
 #' @export
 
 # Function to plot the number of CpGs covered per ICR, comparing df.ICR.cpg with bedmeth
-plot_CpG_coverage <- function(df_ICR_cpg, bedmeth_version = "v1") {
+plot_CpG_coverage <- function(df_ICR_cpg, bedmeth = "v1") {
   
   # Load the bedmeth data based on the version specified
-  if (bedmeth_version == "v1") {
+  if (bedmeth == "v1") {
     message("Loading bedEPICv1...")
     data(bedEPICv1)
     bedmeth_data <- bedEPICv1
-  } else if (bedmeth_version == "v2") {
+  } else if (bedmeth == "v2") {
     message("Loading bedEPICv2...")
     data(bedEPICv2)
     bedmeth_data <- bedEPICv2
-  } else if (bedmeth_version == "450k") {
+  } else if (bedmeth == "450k") {
     message("Loading bed450k...")
     data(bed450k)
     bedmeth_data <- bed450k
@@ -50,7 +50,7 @@ plot_CpG_coverage <- function(df_ICR_cpg, bedmeth_version = "v1") {
   dplyr::rename("ICR" = "ICR.x",
                 "Total_cov" = "n")
 
-  comparison_data <- full_join(df_ICR_cpg_counts, probeICR, by = "ICR")
+  comparison_data <- full_join(df_ICR_cpg_counts, bedmeth_counts, by = "ICR")
 
   comparison_data_long <- comparison_data %>%
   pivot_longer(cols = c(n_cpgs, Total_cov), names_to = "Measure", values_to = "Count") %>%
