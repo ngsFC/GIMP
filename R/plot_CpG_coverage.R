@@ -56,12 +56,17 @@ plot_CpG_coverage <- function(df_ICR_cpg, bedmeth = "v1") {
   pivot_longer(cols = c(n_cpgs, Total_cov), names_to = "Measure", values_to = "Count") %>%
   replace_na(list(Count = 0))
 
-  ggplot(comparison_data_long, aes(x = reorder(ICR,Count), y = Count, fill = Measure)) +
+  plot <- ggplot(comparison_data_long, aes(x = reorder(ICR,Count), y = Count, fill = Measure)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +
   labs(title = "Number of CpGs Covered per ICR", x = "ICR", y = "Number of CpGs") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme_bw() + 
   coord_flip()
 
-  return(comparison_data)
+  # Print the plot and the comparison_data_long
+  print(plot)  # Display the plot
+  print(comparison_data)  # Display the long-form comparison data
+  
+  # Return both the plot and the data
+  return(list(plot = plot, comparison_data_long = comparison_data_long))
 }
