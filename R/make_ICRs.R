@@ -38,7 +38,7 @@ make_ICRs <- function(Bmatrix, bedmeth = "v1") {
   probeICR <- bed_intersect(ICRs, bedmeth_data) %>%
     mutate(chr = gsub("chr", "", chrom)) %>%
     mutate(chr = as.numeric(chr)) %>%
-    arrange(chr, start.x) %>%
+    dplyr::arrange(chr, start.x) %>%
     dplyr::select(probeID.y, start.y, ICR.x, start.x, end.x) %>%
     as.data.frame()
 
@@ -57,7 +57,7 @@ make_ICRs <- function(Bmatrix, bedmeth = "v1") {
     full_join(ICRs, by = "ICR") %>%
     mutate(chr = gsub("chr", "", chrom)) %>%
     mutate(chr = as.numeric(chr)) %>%
-    arrange(chr, start) %>%
+    dplyr::arrange(chr, start) %>%
     column_to_rownames("ICR") %>%
     filter(!is.na(.[[1]])) %>%  # Dynamically filter based on the first column of the grouped data
     dplyr::select(-c("chrom", "start", "end", "germ", "chr")) %>%
