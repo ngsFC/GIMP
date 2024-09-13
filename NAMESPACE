@@ -1,5 +1,6 @@
 # Export functions
-export(create_ICR_matrices)
+export(make_cpgs)
+export(make_ICRs)
 export(create_bedmeth)
 
 # Import functions from other packages

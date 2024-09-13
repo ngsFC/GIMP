@@ -1,11 +1,10 @@
-#' Create the Imprinted Matrix
+#' Create the ICR CPG Matrix
 #'
 #' @examples
-#' create_ICR_matrices(Bmatrix = your_betamatrix, bedmeth = "v1") 
+#' ICRcpg <- make_cpgs(Bmatrix = df, bedmeth = "v1")
 #' @export
 
-# Define the function to create df.ICR.cpg and df.ICR
-create_ICR_matrices <- function(Bmatrix, bedmeth = "v1") {
+make_cpgs <- function(Bmatrix, bedmeth = "v1") {
   
   # Load the appropriate bedmeth data based on the bedmeth input
   if (bedmeth == "v1") {
@@ -55,32 +54,6 @@ create_ICR_matrices <- function(Bmatrix, bedmeth = "v1") {
     na.omit() %>%
     as.data.frame()
 
-  # Save df.ICR.cpg
-  write.csv(df.ICR.cpg, "df_ICR_cpg.csv", row.names = TRUE)
-  message("df_ICR_cpg.csv has been saved.")
-
-  # Create df.ICR matrix
-  df.ICR <- as.data.frame(Bmatrix) %>%
-    rownames_to_column("probeID") %>%
-    full_join(probeICR, by = "probeID") %>%
-    filter(!is.na(ICR)) %>%
-    filter(!is.na(.[[2]])) %>%  # Dynamically filter based on the first data column
-    dplyr::select(-probeID) %>%
-    group_by(ICR) %>%
-    summarise_all(mean) %>%
-    ungroup() %>%
-    full_join(ICRs, by = "ICR") %>%
-    mutate(chr = gsub("chr", "", chrom)) %>%
-    mutate(chr = as.numeric(chr)) %>%
-    arrange(chr, start) %>%
-    column_to_rownames("ICR") %>%
-    filter(!is.na(.[[1]])) %>%  # Dynamically filter based on the first column of the grouped data
-    dplyr::select(-c("chrom", "start", "end", "germ", "chr")) %>%
-    as.data.frame()
-
-  # Save df.ICR
-  write.csv(df.ICR, "df_ICR.csv", row.names = TRUE)
-  message("df_ICR.csv has been saved.")
-  
-  return(list(df.ICR.cpg = df.ICR.cpg, df.ICR = df.ICR))
+  return(df.ICR.cpg)
 }
+
