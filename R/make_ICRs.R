@@ -46,22 +46,22 @@ make_ICRs <- function(Bmatrix, bedmeth = "v1") {
 
   # Create df.ICR matrix
   df.ICR <- as.data.frame(Bmatrix) %>%
-    rownames_to_column("probeID") %>%
-    full_join(probeICR, by = "probeID") %>%
-    filter(!is.na(ICR)) %>%
-    filter(!is.na(.[[2]])) %>%  # Dynamically filter based on the first data column
-    dplyr::select(-probeID) %>%
-    group_by(ICR) %>%
-    summarise_all(mean) %>%
-    ungroup() %>%
-    full_join(ICRs, by = "ICR") %>%
-    mutate(chr = gsub("chr", "", chrom)) %>%
-    mutate(chr = as.numeric(chr)) %>%
-    dplyr::arrange(across(c(chr, start))) %>%
-    column_to_rownames("ICR") %>%
-    filter(!is.na(.[[1]])) %>%  # Dynamically filter based on the first column of the grouped data
-    dplyr::select(-c("chrom", "start", "end", "germ", "chr")) %>%
-    as.data.frame()
+  rownames_to_column("probeID") %>%
+  full_join(probeICR, by = "probeID") %>%
+  filter(!is.na(ICR)) %>%
+  filter(!is.na(.[[2]])) %>%  # Dynamically filter based on the first data column
+  dplyr::select(-probeID,-start,-end) %>%
+  group_by(ICR) %>%
+  summarise_all(mean) %>%
+  ungroup() %>%
+  full_join(ICRs, by = "ICR") %>%
+  mutate(chr = gsub("chr", "", chrom)) %>%
+  mutate(chr = as.numeric(chr)) %>%
+  dplyr::arrange(chr, start) %>%
+  column_to_rownames("ICR") %>%
+  filter(!is.na(.[[1]])) %>%  # Dynamically filter based on the first column of the grouped data
+  dplyr::select(-c("chrom", "start", "end", "chr", "cstart")) %>%
+  as.data.frame()
 
   return(df.ICR)
 }
