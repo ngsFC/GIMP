@@ -59,7 +59,7 @@ analyze_ICR <- function(df_ICR, group_vector, control_label = "Control", case_la
     control_indices <- which(group_vector == control_label)
     
     # Convert Beta values to M-values for controls and entire matrix
-    df_mvalues <- beta_to_mvalue(as.matrix(df))
+    df_mvalues <- log2(as.matrix(df)/(1-df))
     control_mvalues <- df_mvalues[, control_indices, drop = FALSE]
     
     # Calculate the mean and 3*SD for controls (in M-value space)
