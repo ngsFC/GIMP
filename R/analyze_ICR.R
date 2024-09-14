@@ -9,6 +9,15 @@
 #'  result$df_ICR_defect  # Binary defect matrix
 #' @export
 
+# Convert Beta values to M-values
+beta_to_mvalue <- function(beta) {
+  return(log2(beta / (1 - beta)))
+}
+
+# Convert M-values back to Beta values
+mvalue_to_beta <- function(mvalue) {
+  return(2^mvalue / (1 + 2^mvalue))
+}
 
 # Function to create heatmaps and delta matrices
 analyze_ICR <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case") {
@@ -16,8 +25,8 @@ analyze_ICR <- function(df_ICR, group_vector, control_label = "Control", case_la
   # Ensure the group_vector is a factor
   group_vector <- factor(group_vector, levels = c(control_label, case_label))
   
-  # Step 1: Plot a heatmap of df.ICR with Case/Control annotations
-  plot_heatmap <- function(df, group_vector, title = "Heatmap of df.ICR") {
+  # Step 1: Plot a heatmap of df.ICR with Case/Control annotations, scale 0 to 1
+  plot_heatmap <- function(df, group_vector, title = "Heatmap of df.ICR", scale_limits = c(0, 1)) {
     df_melt <- melt(as.matrix(df))
     colnames(df_melt) <- c("ICR", "Sample", "BetaValue")
     
@@ -27,53 +36,60 @@ analyze_ICR <- function(df_ICR, group_vector, control_label = "Control", case_la
     # Plot the heatmap
     ggplot(df_melt, aes(x = Sample, y = ICR, fill = BetaValue)) +
       geom_tile() +
-      scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0.5) +
+      scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0.5, limits = scale_limits) +
       labs(title = title, x = "Sample", y = "ICR", fill = "Beta Value") +
       theme_minimal() +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))
   }
   
-  # Step 2: Calculate DeltaBeta (df.ICR.delta)
+  # Step 2: Calculate DeltaBeta (df.ICR.delta) with scale -0.5 to 0.5
   calculate_delta_beta <- function(df, group_vector, control_label) {
     control_indices <- which(group_vector == control_label)
     
     # Calculate the mean for controls for each ICR (row-wise)
     control_means <- rowMeans(df[, control_indices, drop = FALSE])
     
-    # Subtract control means from the entire matrix
+    # Subtract control means from the entire matrix to get DeltaBeta
     df_delta <- sweep(df, 1, control_means)
     
     return(df_delta)
   }
   
-  # Step 3: Create a binary defect matrix (df.ICR.defect)
+  # Step 3: Create a binary defect matrix (df.ICR.defect) based on M-values
   calculate_defect_matrix <- function(df, group_vector, control_label) {
     control_indices <- which(group_vector == control_label)
     
-    # Calculate the mean and 3*SD for controls for each ICR (row-wise)
-    control_means <- rowMeans(df[, control_indices, drop = FALSE])
-    control_sds <- apply(df[, control_indices, drop = FALSE], 1, sd)
-    threshold <- control_means + 3 * control_sds
+    # Convert Beta values to M-values for controls and entire matrix
+    df_mvalues <- beta_to_mvalue(as.matrix(df))
+    control_mvalues <- df_mvalues[, control_indices, drop = FALSE]
     
-    # Create a binary matrix where BetaValue > threshold is 1, otherwise 0
-    df_defect <- sweep(df, 1, threshold, FUN = ">") * 1  # Binary matrix (1 if exceeds, else 0)
+    # Calculate the mean and 3*SD for controls (in M-value space)
+    control_means <- rowMeans(control_mvalues)
+    control_sds <- apply(control_mvalues, 1, sd)
+    
+    # Define thresholds for binary defect matrix
+    upper_threshold <- control_means + 3 * control_sds
+    lower_threshold <- control_means - 3 * control_sds
+    
+    # Create a binary matrix where BetaValue is outside the thresholds
+    df_defect <- (df_mvalues > upper_threshold | df_mvalues < lower_threshold) * 1  # Binary matrix
     
     return(df_defect)
   }
   
-  # Step 1: Heatmap of df.ICR with Case/Control annotations
+  # Step 1: Heatmap of df.ICR with Case/Control annotations (scale 0 to 1)
   print("Plotting heatmap of df.ICR")
-  heatmap_1 <- plot_heatmap(df_ICR, group_vector, title = "Heatmap of df.ICR")
+  heatmap_1 <- plot_heatmap(df_ICR, group_vector, title = "Heatmap of df.ICR", scale_limits = c(0, 1))
   
-  # Step 2: Calculate DeltaBeta matrix and plot heatmap
+  # Step 2: Calculate DeltaBeta matrix and plot heatmap (scale -0.5 to 0.5)
   df_ICR_delta <- calculate_delta_beta(df_ICR, group_vector, control_label)
   print("Plotting heatmap of DeltaBeta (df_ICR_delta)")
-  heatmap_2 <- plot_heatmap(df_ICR_delta, group_vector, title = "Heatmap of DeltaBeta (df_ICR_delta)")
+  heatmap_2 <- plot_heatmap(df_ICR_delta, group_vector, title = "Heatmap of DeltaBeta (df_ICR_delta)", scale_limits = c(-0.5, 0.5))
   
   # Step 3: Calculate binary defect matrix and plot heatmap
   df_ICR_defect <- calculate_defect_matrix(df_ICR, group_vector, control_label)
   print("Plotting heatmap of binary defect matrix (df_ICR_defect)")
-  heatmap_3 <- plot_heatmap(df_ICR_defect, group_vector, title = "Heatmap of Defect Matrix (df_ICR_defect)")
+  heatmap_3 <- plot_heatmap(df_ICR_defect, group_vector, title = "Heatmap of Defect Matrix (df_ICR_defect)", scale_limits = c(0, 1))
   
   # Return the three matrices and their heatmaps
   return(list(
@@ -84,4 +100,3 @@ analyze_ICR <- function(df_ICR, group_vector, control_label = "Control", case_la
     heatmap_defect = heatmap_3
   ))
 }
-
