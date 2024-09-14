@@ -1,8 +1,8 @@
-# GIMP: Genomic Imprinting and Methylation Patterns
+# GIMP: Genomic Imprinting Methylation Patterns
 
 [![R](https://img.shields.io/badge/R-4.0+-blue.svg)](https://cran.r-project.org/)
 
-**GIMP** (Genomic Imprinting and Methylation Patterns) is an R package designed for the analysis of methylation arrays. It provides a pipeline for generating CpG sites, computing CpG coverage, and analyzing ICRs (Imprinting Control Regions) from methylation data. The package supports multiple platforms, including Illumina's 450k, EPIC v1, and EPIC v2 arrays.
+**GIMP** (Genomic Imprinting Methylation Patterns) is an R package designed for the analysis of methylation arrays. It provides a pipeline for generating CpG sites, computing CpG coverage, and analyzing ICRs (Imprinting Control Regions) from methylation data. The package supports multiple platforms, including Illumina's 450k, EPIC v1, and EPIC v2 arrays.
 
 ## Installation
 
@@ -23,9 +23,9 @@ library(GIMP)
 
 The GIMP package depends on the following R packages:
 
-    **tidyverse**: A collection of R packages for data manipulation.
-    **valr**: Tools to work with genome intervals.
-    **reshape2**: A package for reshaping data between wide and long formats.
+    tidyverse: A collection of R packages for data manipulation.
+    valr: Tools to work with genome intervals.
+    reshape2: A package for reshaping data between wide and long formats.
 
 Ensure that these dependencies are installed before running GIMP.
 
