@@ -1,7 +1,6 @@
 .onLoad <- function(libname, pkgname) {
-    # List of Bioconductor packages your package depends on
-    bioc_packages <- c("IlluminaHumanMethylation450kanno.ilmn12.hg19","IlluminaHumanMethylationEPICanno.ilm10b4.hg19","IlluminaHumanMethylationEPICv2anno.20a1.hg38")  # Replace with actual packages needed
-
+    # List of Bioconductor packages package depends on
+    bioc_packages <- c("IlluminaHumanMethylation450kanno.ilmn12.hg19","IlluminaHumanMethylationEPICanno.ilm10b4.hg19","IlluminaHumanMethylationEPICv2anno.20a1.hg38") 
     # Check if BiocManager is available; install it if not
     if (!requireNamespace("BiocManager", quietly = TRUE)) {
         install.packages("BiocManager")
