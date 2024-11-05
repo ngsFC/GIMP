@@ -19,7 +19,7 @@
 #'             bedmeth = "v1", cluster_by = "meth")
 #' @export
 #' 
-DMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", cluster_by = "cord") {
+iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", order_by = "cord") {
   
   # Load required library
   library(pheatmap)
@@ -53,7 +53,7 @@ DMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_la
                 seq(0.500001, 1, length.out = floor(paletteLength / 2)))
   
   # Determine row clustering based on cluster_by parameter
-  row_clust <- if (cluster_by == "cord") FALSE else if (cluster_by == "meth") TRUE else {
+  row_clust <- if (order_by == "cord") FALSE else if (order_by == "meth") TRUE else {
     stop("Please select a valid 'cluster_by' parameter: 'cord' to cluster by coordinates or 'meth' to cluster by methylation values.")
   }
   
