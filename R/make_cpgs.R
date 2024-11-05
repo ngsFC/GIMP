@@ -1,7 +1,16 @@
-#' Create the ICR CPG Matrix
+#' Create ICR CpG Matrix
 #'
+#' This function generates a CpG matrix for Imprinted Control Regions (ICR) using methylation data. The CpG matrix is constructed based on the provided BED data version.
+#'
+#' @param Bmatrix A data frame or matrix containing methylation beta values. Rows typically represent individual probes or CpGs, and columns represent samples.
+#' @param bedmeth A character string specifying the BED data version to use for CpG mapping. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.
+#' @return A data frame representing the ICR CpG matrix, with rows as CpG probes and columns as samples.
 #' @examples
+#' # Generate the ICR CpG matrix with default BED version (EPIC v1)
 #' ICRcpg <- make_cpgs(Bmatrix = df, bedmeth = "v1")
+#' 
+#' # Use a different BED version, such as EPIC v2
+#' ICRcpg_v2 <- make_cpgs(Bmatrix = df, bedmeth = "v2")
 #' @export
 
 make_cpgs <- function(Bmatrix, bedmeth = "v1") {

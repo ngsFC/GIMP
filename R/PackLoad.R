@@ -1,0 +1,31 @@
+.onLoad <- function(libname, pkgname) {
+    # List of Bioconductor packages your package depends on
+    bioc_packages <- c("IlluminaHumanMethylation450kanno.ilmn12.hg19","IlluminaHumanMethylationEPICanno.ilm10b4.hg19","IlluminaHumanMethylationEPICv2anno.20a1.hg38")  # Replace with actual packages needed
+
+    # Check if BiocManager is available; install it if not
+    if (!requireNamespace("BiocManager", quietly = TRUE)) {
+        install.packages("BiocManager")
+    }
+
+    # Install missing Bioconductor dependencies
+    for (pkg in bioc_packages) {
+        if (!requireNamespace(pkg, quietly = TRUE)) {
+            BiocManager::install(pkg, ask = FALSE)
+        }
+    }
+    
+    message <- "
+      ______   ______  __       __  _______  
+ /      \ |      \|  \     /  \|       \ 
+|  $$$$$$\ \$$$$$$| $$\   /  $$| $$$$$$$\
+| $$ __\$$  | $$  | $$$\ /  $$$| $$__/ $$
+| $$|    \  | $$  | $$$$\  $$$$| $$    $$
+| $$ \$$$$  | $$  | $$\$$ $$ $$| $$$$$$$ 
+| $$__| $$ _| $$_ | $$ \$$$| $$| $$      
+ \$$    $$|   $$ \| $$  \$ | $$| $$      
+  \$$$$$$  \$$$$$$ \$$      \$$ \$$                                 
+    "
+    
+    packageStartupMessage(message)
+    packageStartupMessage("Thank you for using the GIMP package. Dont forget to cite us!")
+}

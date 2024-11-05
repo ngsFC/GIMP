@@ -1,5 +1,10 @@
 #' Create the ICR Matrix
 #'
+#' This function generates an ICR (Imprinted Control Region) matrix from a given beta matrix, using specified BED data for CpG mapping. The ICR matrix provides data organized by CpG probes and samples.
+#'
+#' @param Bmatrix A data frame or matrix containing methylation beta values. Rows should represent CpG probes, and columns represent samples.
+#' @param bedmeth A character string indicating the BED data version to use for CpG mapping. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.
+#' @return A data frame representing the ICR matrix, structured by CpG probes and samples.
 #' @examples
 #' ICRmatrix <- make_ICRs(Bmatrix = df, bedmeth = "v1")
 #' @export

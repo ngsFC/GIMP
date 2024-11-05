@@ -1,5 +1,11 @@
 #' Plot ICR CPG Matrix
 #'
+#'
+#' This function plots the CpG coverage for Imprinted Control Regions (ICRs) using the provided data frame of CpG counts. It compares CpG counts in the specified BED data version for visual analysis.
+#'
+#' @param df_ICR_cpg A data frame containing CpG counts for ICR regions. Each row represents a different CpG probe, and columns contain sample-related information.
+#' @param bedmeth A character string specifying the BED data version to use for mapping CpG coverage. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.
+#' @return A plot visualizing the CpG coverage for ICR regions based on the specified BED data.
 #' @examples
 #' plot_CpG_coverage(df_ICR_cpg_counts, bedmeth = "v1")
 #' @export
