@@ -7,7 +7,7 @@
 make_ICRs(Bmatrix, bedmeth = "v1")
 }
 \arguments{
-\item{Bmatrix}{A data frame or matrix containing methylation beta values. Rows should represent CpG probes, and columns represent samples.}
+\item{Bmatrix}{A data frame or matrix containing methylation beta values. Rows should represent CpG probes, and columns represent samples. The coordinates of the Human Imprinted regions are taken from http://humanimprints.net/}
 
 \item{bedmeth}{A character string indicating the BED data version to use for CpG mapping. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.}
 }
