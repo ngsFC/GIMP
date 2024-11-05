@@ -1,12 +1,21 @@
 #' Define ICR defects
 #'
+#' This function generates heatmaps and delta matrices to analyze ICR (Imprinted Control Regions) defects based on the input data.
+#'
+#' @param df_ICR A data frame or matrix containing ICR data. Rows represent individual probes or features, and columns represent samples.
+#' @param group_vector A vector indicating group labels (e.g., "Control" and "Case") for each sample in `df_ICR`.
+#' @param control_label A character string specifying the label for the control group in `group_vector`. Default is "Control".
+#' @return A list containing:
+#'   \item{heatmap_ICR}{A heatmap displaying the ICR data for visualization.}
+#'   \item{df_ICR_delta}{A delta matrix showing differences in beta values between groups.}
+#'   \item{df_ICR_defect}{A binary matrix indicating the presence of ICR defects.}
 #' @examples
-#'  Assuming df_ICR is your matrix and you have a group_vector like c("Control", "Case", "Control", "Case", ...)
-#'  result <- analyze_ICR(df_ICR, group_vector)
-#'  View the heatmaps and matrices:
-#'  result$heatmap_ICR  # Heatmap of df.ICR
-#'  result$df_ICR_delta  # DeltaBeta matrix
-#'  result$df_ICR_defect  # Binary defect matrix
+#' # Assuming df_ICR is your matrix and you have a group vector like c("Control", "Case", "Control", "Case", ...)
+#' result <- analyze_ICR(df_ICR, group_vector)
+#' # View the heatmaps and matrices:
+#' result$heatmap_ICR  # Heatmap of df_ICR
+#' result$df_ICR_delta  # DeltaBeta matrix
+#' result$df_ICR_defect  # Binary defect matrix
 #' @export
 
 # Function to create heatmaps and delta matrices
