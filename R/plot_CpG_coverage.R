@@ -12,6 +12,10 @@
 
 # Function to plot the number of CpGs covered per ICR, comparing df.ICR.cpg with bedmeth
 plot_CpG_coverage <- function(df_ICR_cpg, bedmeth = "v1") {
+
+   # Load required library
+  library(valr)
+  library(ggplot2)
   
   # Load the bedmeth data based on the version specified
   if (bedmeth == "v1") {
