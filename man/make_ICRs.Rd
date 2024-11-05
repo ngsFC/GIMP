@@ -15,7 +15,9 @@ make_ICRs(Bmatrix, bedmeth = "v1")
 A data frame representing the ICR matrix, structured by CpG probes and samples.
 }
 \description{
-This function generates an ICR (Imprinted Control Region) matrix from a given beta matrix, using specified BED data for CpG mapping. The ICR matrix provides data organized by CpG probes and samples. The coordinates of the Human Imprinted regions are taken from https://doi.org/10.1080/15592294.2016.1264561
+This function generates an ICR (Imprinted Control Region) matrix from a given beta matrix, using specified BED data for CpG mapping.
+The ICR matrix provides data organized by CpG probes and samples.
+The coordinates of the Human Imprinted regions are taken from \url{https://doi.org/10.1080/15592294.2016.1264561}
 }
 \examples{
 ICRmatrix <- make_ICRs(Bmatrix = df, bedmeth = "v1")
