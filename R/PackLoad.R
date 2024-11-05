@@ -14,6 +14,5 @@
         }
     }
     
-    packageStartupMessage(message)
     packageStartupMessage("Thank you for using the GIMP package. Dont forget to cite us!")
 }
