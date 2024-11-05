@@ -1,0 +1,80 @@
+#' Generate Heatmap of Imprinted DMRs Methylation
+#'
+#' This function generates a heatmap for visualizing methylation data of Imprinted Differentially Methylated Regions (DMRs). It offers options for clustering rows based on either the genomic coordinates or methylation values and uses specified BED data for mapping.
+#'
+#' @param df_ICR A data frame or matrix containing methylation beta values for Imprinted DMRs. Rows represent individual DMRs (CpG probes or sites), and columns represent samples.
+#' @param group_vector A vector indicating the group labels (e.g., "Control" and "Case") for each sample in `df_ICR`.
+#' @param control_label A character string specifying the label for the control group in `group_vector`. Default is `"Control"`.
+#' @param case_label A character string specifying the label for the case group in `group_vector`. Default is `"Case"`.
+#' @param bedmeth A character string specifying the BED data version for DMR coordinates. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.
+#' @param cluster_by A character string specifying the clustering method for rows in the heatmap. Options are `"cord"` to cluster by genomic coordinates or `"meth"` to cluster by methylation values. Default is `"cord"`.
+#' @return A heatmap plot visualizing the methylation status of Imprinted DMRs across groups, with rows optionally clustered by genomic coordinates or methylation values.
+#' @examples
+#' # Generate a heatmap with default parameters (clustering by coordinates)
+#' DMR_heatmap(df_ICR = my_ICR_data, group_vector = c("Control", "Case", "Control", "Case"),
+#'             bedmeth = "v1", cluster_by = "cord")
+#' 
+#' # Generate a heatmap, clustering rows by methylation values
+#' DMR_heatmap(df_ICR = my_ICR_data, group_vector = c("Control", "Case", "Control", "Case"),
+#'             bedmeth = "v1", cluster_by = "meth")
+#' @export
+#' 
+DMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", cluster_by = "cord") {
+  
+  # Load required library
+  library(pheatmap)
+  
+  # Load BED data based on bedmeth version
+  if (bedmeth == "v1" || bedmeth == "450k") {
+    data(DMRs.hg19)
+    ICR_cord <- DMRs.hg19
+    odr <- ICR_cord$ICR
+  } else if (bedmeth == "v2") {
+    data(DMRs.hg38)
+    ICR_cord <- DMRs.hg38
+    odr <- ICR_cord$ICR
+  } else {
+    stop("Invalid bedmeth version. Choose from 'v1', 'v2', or '450k'.")
+  }
+  
+  # Ensure group_vector is a factor and matches control/case labels
+  group_vector <- factor(group_vector, levels = c(control_label, case_label))
+  mat_col <- data.frame(Sample = group_vector)
+  rownames(mat_col) <- colnames(df_ICR)
+  
+  # Define colors for group annotations
+  mat_colors <- list(Sample = c("darkgreen", "darkred"))
+  names(mat_colors$Sample) <- levels(group_vector)
+  
+  # Define heatmap colors and breaks
+  paletteLength <- 100
+  myColor <- colorRampPalette(c("#785EF0", "white", "#9a031e"))(paletteLength)
+  myBreaks <- c(seq(0, 0.5, length.out = ceiling(paletteLength / 2) + 1), 
+                seq(0.500001, 1, length.out = floor(paletteLength / 2)))
+  
+  # Determine row clustering based on cluster_by parameter
+  row_clust <- if (cluster_by == "cord") FALSE else if (cluster_by == "meth") TRUE else {
+    stop("Please select a valid 'cluster_by' parameter: 'cord' to cluster by coordinates or 'meth' to cluster by methylation values.")
+  }
+  
+  # Generate the heatmap
+  pheatmap(
+    mat = df_ICR[odr, ],
+    annotation_col = mat_col,
+    annotation_colors = mat_colors,
+    color = myColor,
+    breaks = myBreaks,
+    border_color = "grey",
+    main = "Methylation of Imprinted DMRs",
+    annotation_legend = TRUE,
+    annotation_names_col = FALSE,
+    annotation_names_row = FALSE,
+    drop_levels = FALSE,
+    fontsize = 8,
+    cluster_rows = row_clust,
+    cluster_cols = TRUE,
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean", 
+    clustering_method = "ward.D2"
+  )
+}
