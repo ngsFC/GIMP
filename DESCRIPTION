@@ -13,4 +13,5 @@ Imports:
     valr,
     reshape2,
     ggplot2,
+    pheatmap,
     BiocManager
