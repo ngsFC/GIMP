@@ -10,34 +10,35 @@ DMR_heatmap(
   control_label = "Control",
   case_label = "Case",
   bedmeth = "v1",
-  cluster_by = "cord"
+  cluster_by = "cord",
+  annotation_col = NULL
 )
 }
 \arguments{
-\item{df_ICR}{A data frame or matrix containing methylation beta values for Imprinted DMRs. Rows represent individual DMRs (CpG probes or sites), and columns represent samples.}
+\item{df_ICR}{A data frame or matrix containing methylation beta values for Imprinted DMRs.}
 
-\item{group_vector}{A vector indicating the group labels (e.g., "Control" and "Case") for each sample in `df_ICR`.}
+\item{group_vector}{A vector indicating the group labels (e.g., "Control" and "Case") for each sample in `df_ICR`.
+Each element in `group_vector` should correspond to a sample in `df_ICR`.}
 
 \item{control_label}{A character string specifying the label for the control group in `group_vector`. Default is `"Control"`.}
 
 \item{case_label}{A character string specifying the label for the case group in `group_vector`. Default is `"Case"`.}
 
-\item{bedmeth}{A character string specifying the BED data version for DMR coordinates. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.}
+\item{bedmeth}{A character string specifying the BED data version for DMR coordinates. Options are `"v1"`, `"v2"`, or `"450k"`. Default is `"v1"`.}
 
-\item{cluster_by}{A character string specifying the clustering method for rows in the heatmap. Options are `"cord"` to cluster by genomic coordinates or `"meth"` to cluster by methylation values. Default is `"cord"`.}
+\item{cluster_by}{A character string specifying the clustering method for rows in the heatmap. Options are `"cord"` or `"meth"`. Default is `"cord"`.}
+
+\item{annotation_col}{A named list of colors for each unique value in `group_vector`. If `NULL`, default colors are assigned using the "viridis" palette. Default is `NULL`.}
 }
 \value{
-A heatmap plot visualizing the methylation status of Imprinted DMRs across groups, with rows optionally clustered by genomic coordinates or methylation values.
+A heatmap plot visualizing methylation of Imprinted DMRs.
 }
 \description{
-This function generates a heatmap for visualizing methylation data of Imprinted Differentially Methylated Regions (DMRs). It offers options for clustering rows based on either the genomic coordinates or methylation values and uses specified BED data for mapping.
+This function generates a heatmap for visualizing methylation data of Imprinted Differentially Methylated Regions (DMRs).
+It allows custom color schemes for group annotations, with default colors from the "viridis" palette.
 }
 \examples{
-# Generate a heatmap with default parameters (clustering by coordinates)
-DMR_heatmap(df_ICR = my_ICR_data, group_vector = c("Control", "Case", "Control", "Case"),
-            bedmeth = "v1", cluster_by = "cord")
-
-# Generate a heatmap, clustering rows by methylation values
-DMR_heatmap(df_ICR = my_ICR_data, group_vector = c("Control", "Case", "Control", "Case"),
-            bedmeth = "v1", cluster_by = "meth")
+# Example group_vector with "Case" and "Control" labels for each sample
+group_vector <- c(rep("Case", 10), rep("Control", 10))
+DMR_heatmap(df_ICR = my_ICR_data, group_vector = group_vector, annotation_col = list(Sample = c("darkgreen", "darkred")))
 }
