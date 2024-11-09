@@ -1,5 +1,5 @@
 Package: GIMP
-Title: Genomic Imprinting Methylation Package 
+Title: Genomic Imprinting Methylation Package (GIMP)
 Version: 0.1.0
 Author: Francesco Cecere <francesco.cecerengs@gmail.com>
 Description: A package for analyzing DNA methylation at imprinted loci
