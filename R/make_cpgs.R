@@ -14,10 +14,7 @@
 #' @export
 
 make_cpgs <- function(Bmatrix, bedmeth = "v1") {
-
-  # Load required library
-  library(tidyverse)
-  
+ 
   # Load the appropriate bedmeth data based on the bedmeth input
   if (bedmeth == "v1") {
     message("Loading bedEPICv1...")
