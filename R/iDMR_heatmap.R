@@ -92,7 +92,7 @@ iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_l
   }
   
   # Capture each heatmap as a grob without defining a custom class
-heatmap_beta <- grid::grid.grabExpr({
+heatmap_beta <- as.ggplot(
   pheatmap(
     mat = df_ICR[odr, ],
     annotation_col = mat_col,
@@ -112,9 +112,9 @@ heatmap_beta <- grid::grid.grabExpr({
     clustering_distance_cols = "euclidean", 
     clustering_method = "ward.D2"
   )
-})
+  )
 
-heatmap_delta <- grid::grid.grabExpr({
+heatmap_delta <- as.ggplot(
   pheatmap(
     mat = df_ICR_delta[odr, ],
     annotation_col = mat_col,
@@ -134,9 +134,9 @@ heatmap_delta <- grid::grid.grabExpr({
     clustering_distance_cols = "euclidean", 
     clustering_method = "ward.D2"
   )
-})
+  )
 
-heatmap_defect <- grid::grid.grabExpr({
+heatmap_defect <- as.ggplot(
   pheatmap(
     mat = df_ICR_defect[odr, ],
     annotation_col = mat_col,
@@ -151,16 +151,16 @@ heatmap_defect <- grid::grid.grabExpr({
     fontsize = 8,
     cluster_rows = row_clust,
     cluster_cols = TRUE,
-    clustering_distance_rows = "euclidean",
+    clustering_distance_rows = "binary",
     clustering_distance_cols = "euclidean", 
     clustering_method = "ward.D2"
   )
-})
+  )
 
 # Return list where each element is an expression to display the plot
 return(list(
-  heatmap_beta = eval(substitute(grid::grid.draw(heatmap_beta))),
-  heatmap_delta = eval(substitute(grid::grid.draw(heatmap_delta))),
-  heatmap_defect = eval(substitute(grid::grid.draw(heatmap_defect)))
+  heatmap_beta = heatmap_beta,
+  heatmap_delta = heatmap_delta,
+  heatmap_defect = heatmap_defect
 ))
 }
