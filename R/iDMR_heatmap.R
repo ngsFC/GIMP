@@ -91,77 +91,75 @@ iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_l
     stop("Please select a valid 'cluster_by' parameter: 'cord' to cluster by coordinates or 'meth' to cluster by methylation values.")
   }
   
-  # Generate heatmaps and capture each as a grob
-  heatmap_beta <- grid::grid.grabExpr({
-    pheatmap(
-      mat = df_ICR[odr, ],
-      annotation_col = mat_col,
-      annotation_colors = annotation_col,
-      color = betaColor,
-      breaks = betaBreaks,
-      border_color = "grey",
-      main = "Methylation of Imprinted DMRs (Beta)",
-      annotation_legend = TRUE,
-      annotation_names_col = FALSE,
-      annotation_names_row = FALSE,
-      drop_levels = FALSE,
-      fontsize = 8,
-      cluster_rows = row_clust,
-      cluster_cols = TRUE,
-      clustering_distance_rows = "euclidean",
-      clustering_distance_cols = "euclidean", 
-      clustering_method = "ward.D2"
-    )
-  })
-  
-  heatmap_delta <- grid::grid.grabExpr({
-    pheatmap(
-      mat = df_ICR_delta[odr, ],
-      annotation_col = mat_col,
-      annotation_colors = annotation_col,
-      color = deltaColor,
-      breaks = deltaBreaks,
-      border_color = "grey",
-      main = "Delta Beta of Imprinted DMRs",
-      annotation_legend = TRUE,
-      annotation_names_col = FALSE,
-      annotation_names_row = FALSE,
-      drop_levels = FALSE,
-      fontsize = 8,
-      cluster_rows = row_clust,
-      cluster_cols = TRUE,
-      clustering_distance_rows = "euclidean",
-      clustering_distance_cols = "euclidean", 
-      clustering_method = "ward.D2"
-    )
-  })
-  
-  heatmap_defect <- grid::grid.grabExpr({
-    pheatmap(
-      mat = df_ICR_defect[odr, ],
-      annotation_col = mat_col,
-      annotation_colors = annotation_col,
-      color = binaryColor,
-      border_color = "grey",
-      main = "Defect Matrix of Imprinted DMRs",
-      annotation_legend = TRUE,
-      annotation_names_col = FALSE,
-      annotation_names_row = FALSE,
-      drop_levels = FALSE,
-      fontsize = 8,
-      cluster_rows = row_clust,
-      cluster_cols = TRUE,
-      clustering_distance_rows = "euclidean",
-      clustering_distance_cols = "euclidean", 
-      clustering_method = "ward.D2"
-    )
-  })
-  
-  # Return list of heatmap grobs
-  return(list(
-    heatmap_beta = grid.draw(heatmap_beta),
-    heatmap_delta = grid.draw(heatmap_delta),
-    heatmap_defect = grid.draw(heatmap_defect)
-  ))
-}
+  # Capture each heatmap as a grob without defining a custom class
+heatmap_beta <- grid::grid.grabExpr({
+  pheatmap(
+    mat = df_ICR[odr, ],
+    annotation_col = mat_col,
+    annotation_colors = annotation_col,
+    color = betaColor,
+    breaks = betaBreaks,
+    border_color = "grey",
+    main = "Methylation of Imprinted DMRs (Beta)",
+    annotation_legend = TRUE,
+    annotation_names_col = FALSE,
+    annotation_names_row = FALSE,
+    drop_levels = FALSE,
+    fontsize = 8,
+    cluster_rows = row_clust,
+    cluster_cols = TRUE,
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean", 
+    clustering_method = "ward.D2"
+  )
+})
 
+heatmap_delta <- grid::grid.grabExpr({
+  pheatmap(
+    mat = df_ICR_delta[odr, ],
+    annotation_col = mat_col,
+    annotation_colors = annotation_col,
+    color = deltaColor,
+    breaks = deltaBreaks,
+    border_color = "grey",
+    main = "Delta Beta of Imprinted DMRs",
+    annotation_legend = TRUE,
+    annotation_names_col = FALSE,
+    annotation_names_row = FALSE,
+    drop_levels = FALSE,
+    fontsize = 8,
+    cluster_rows = row_clust,
+    cluster_cols = TRUE,
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean", 
+    clustering_method = "ward.D2"
+  )
+})
+
+heatmap_defect <- grid::grid.grabExpr({
+  pheatmap(
+    mat = df_ICR_defect[odr, ],
+    annotation_col = mat_col,
+    annotation_colors = annotation_col,
+    color = binaryColor,
+    border_color = "grey",
+    main = "Defect Matrix of Imprinted DMRs",
+    annotation_legend = TRUE,
+    annotation_names_col = FALSE,
+    annotation_names_row = FALSE,
+    drop_levels = FALSE,
+    fontsize = 8,
+    cluster_rows = row_clust,
+    cluster_cols = TRUE,
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean", 
+    clustering_method = "ward.D2"
+  )
+})
+
+# Return list where each element is an expression to display the plot
+return(list(
+  heatmap_beta = eval(substitute(grid::grid.draw(heatmap_beta))),
+  heatmap_delta = eval(substitute(grid::grid.draw(heatmap_delta))),
+  heatmap_defect = eval(substitute(grid::grid.draw(heatmap_defect)))
+))
