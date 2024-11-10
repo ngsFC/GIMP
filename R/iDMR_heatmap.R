@@ -37,7 +37,7 @@ iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_l
     stop("Invalid bedmeth version. Choose from 'v1', 'v2', or '450k'.")
   }
   
-  # Ensure that group_vector has the same length as the number of samples (columns) in df_ICR
+  # Ensure group_vector length matches number of samples (columns) in df_ICR
   if (length(group_vector) != ncol(df_ICR)) {
     stop("Length of 'group_vector' must match the number of samples (columns) in 'df_ICR'.")
   }
@@ -62,26 +62,47 @@ iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_l
     names(annotation_col[[1]]) <- unique_groups
   }
   
-  # Define heatmap palette and breaks
+  # Define heatmap palette and breaks for beta values
   paletteLength <- 100
-  myColor <- colorRampPalette(c("#785EF0", "white", "#9a031e"))(paletteLength)
-  myBreaks <- c(seq(0, 0.5, length.out = ceiling(paletteLength / 2) + 1), 
-                seq(0.500001, 1, length.out = floor(paletteLength / 2)))
+  betaColor <- colorRampPalette(c("#785EF0", "white", "#9a031e"))(paletteLength)
+  betaBreaks <- c(seq(0, 0.5, length.out = ceiling(paletteLength / 2) + 1), 
+                  seq(0.500001, 1, length.out = floor(paletteLength / 2)))
   
-  # Determine row clustering based on cluster_by parameter
+  # Calculate DeltaBeta matrix
+  control_indices <- which(group_vector == control_label)
+  control_means <- rowMeans(df_ICR[, control_indices, drop = FALSE])
+  df_ICR_delta <- sweep(df_ICR, 1, control_means)
+  
+  # Define heatmap palette and breaks for delta values
+  deltaColor <- colorRampPalette(c("blue", "white", "red"))(paletteLength)
+  deltaBreaks <- seq(-0.5, 0.5, length.out = paletteLength + 1)
+  
+  # Calculate binary defect matrix
+  df_mvalues <- log2(df_ICR / (1 - df_ICR))
+  control_mvalues <- df_mvalues[, control_indices, drop = FALSE]
+  control_means_m <- rowMeans(control_mvalues)
+  control_sds_m <- apply(control_mvalues, 1, sd)
+  upper_threshold <- control_means_m + 3 * control_sds_m
+  lower_threshold <- control_means_m - 3 * control_sds_m
+  df_ICR_defect <- (df_mvalues > upper_threshold | df_mvalues < lower_threshold) * 1
+  
+  # Define binary color palette
+  binaryColor <- c("white", "black")
+  
+  # Row clustering based on cluster_by parameter
   row_clust <- if (cluster_by == "cord") FALSE else if (cluster_by == "meth") TRUE else {
     stop("Please select a valid 'cluster_by' parameter: 'cord' to cluster by coordinates or 'meth' to cluster by methylation values.")
   }
   
-  # Generate the heatmap
-  pheatmap(
+  # Generate heatmaps
+  heatmap_beta <- pheatmap(
     mat = df_ICR[odr, ],
     annotation_col = mat_col,
     annotation_colors = annotation_col,
-    color = myColor,
-    breaks = myBreaks,
+    color = betaColor,
+    breaks = betaBreaks,
     border_color = "grey",
-    main = "Methylation of Imprinted DMRs",
+    main = "Methylation of Imprinted DMRs (Beta)",
     annotation_legend = TRUE,
     annotation_names_col = FALSE,
     annotation_names_row = FALSE,
@@ -93,5 +114,51 @@ iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_l
     clustering_distance_cols = "euclidean", 
     clustering_method = "ward.D2"
   )
+  
+  heatmap_delta <- pheatmap(
+    mat = df_ICR_delta[odr, ],
+    annotation_col = mat_col,
+    annotation_colors = annotation_col,
+    color = deltaColor,
+    breaks = deltaBreaks,
+    border_color = "grey",
+    main = "Delta Beta of Imprinted DMRs",
+    annotation_legend = TRUE,
+    annotation_names_col = FALSE,
+    annotation_names_row = FALSE,
+    drop_levels = FALSE,
+    fontsize = 8,
+    cluster_rows = row_clust,
+    cluster_cols = TRUE,
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean", 
+    clustering_method = "ward.D2"
+  )
+  
+  heatmap_defect <- pheatmap(
+    mat = df_ICR_defect[odr, ],
+    annotation_col = mat_col,
+    annotation_colors = annotation_col,
+    color = binaryColor,
+    border_color = "grey",
+    main = "Defect Matrix of Imprinted DMRs",
+    annotation_legend = TRUE,
+    annotation_names_col = FALSE,
+    annotation_names_row = FALSE,
+    drop_levels = FALSE,
+    fontsize = 8,
+    cluster_rows = row_clust,
+    cluster_cols = TRUE,
+    clustering_distance_rows = "euclidean",
+    clustering_distance_cols = "euclidean", 
+    clustering_method = "ward.D2"
+  )
+  
+  # Return list of heatmaps
+  return(list(
+    heatmap_beta = heatmap_beta,
+    heatmap_delta = heatmap_delta,
+    heatmap_defect = heatmap_defect
+  ))
 }
 
