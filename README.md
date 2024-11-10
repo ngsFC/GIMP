@@ -2,8 +2,6 @@
 
 [![R](https://img.shields.io/badge/R-4.0+-blue.svg)](https://cran.r-project.org/)
 
-![Logo](GIMP.logo.png)
-
 <div align="center">
   <img src="GIMP.logo.png" alt="Logo" width="200"/>
 </div>
