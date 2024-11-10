@@ -163,3 +163,4 @@ return(list(
   heatmap_delta = eval(substitute(grid::grid.draw(heatmap_delta))),
   heatmap_defect = eval(substitute(grid::grid.draw(heatmap_defect)))
 ))
+}
