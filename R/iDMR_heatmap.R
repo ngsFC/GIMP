@@ -18,7 +18,7 @@
 #' DMR_heatmap(df_ICR = my_ICR_data, group_vector = group_vector, annotation_col = list(Sample = c("darkgreen", "darkred")))
 #' @export
 
-DMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", cluster_by = "cord", annotation_col = NULL) {
+iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", cluster_by = "cord", annotation_col = NULL) {
   
   # Load required libraries
   library(pheatmap)
