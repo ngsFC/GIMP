@@ -22,11 +22,6 @@
 iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", 
                          annotation_col = NULL, cluster_rows = TRUE, cluster_cols = TRUE) {
 
-library(ggplot2)
-library(reshape2)
-library(dplyr)
-library(stats)
-  
   # Ensure group_vector length matches number of samples (columns) in df_ICR
   if (length(group_vector) != ncol(df_ICR)) {
     stop("Length of 'group_vector' must match the number of samples (columns) in 'df_ICR'.")
