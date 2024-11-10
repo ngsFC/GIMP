@@ -21,11 +21,6 @@
 
 iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", cluster_by = "cord", annotation_col = NULL) {
   
-  # Load required libraries
-  library(pheatmap)
-  library(viridisLite)
-  library(grid)
-  
   # Load BED data based on bedmeth version
   if (bedmeth == "v1" || bedmeth == "450k") {
     data(DMRs.hg19)
