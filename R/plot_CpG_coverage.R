@@ -12,12 +12,6 @@
 
 plot_CpG_coverage <- function(df_ICR_cpg, bedmeth = "v1") {
 
-  # Load required libraries
-  library(valr)
-  library(ggplot2)
-  library(dplyr)
-  library(tidyr)
-
   # Load the bedmeth data based on the version specified
   if (bedmeth == "v1") {
     message("Loading bedEPICv1...")
