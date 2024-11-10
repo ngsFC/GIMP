@@ -19,71 +19,65 @@
 #' @export
 
 
-iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", 
-                         annotation_col = NULL, cluster_rows = TRUE, cluster_cols = TRUE) {
-
+iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_label = "Case", bedmeth = "v1", cluster_by = "cord", annotation_col = NULL) {
+  
+  # Load required libraries
+  library(pheatmap)
+  library(viridisLite)
+  library(grid)
+  
+  # Load BED data based on bedmeth version
+  if (bedmeth == "v1" || bedmeth == "450k") {
+    data(DMRs.hg19)
+    ICR_cord <- DMRs.hg19
+    odr <- ICR_cord$ICR
+  } else if (bedmeth == "v2") {
+    data(DMRs.hg38)
+    ICR_cord <- DMRs.hg38
+    odr <- ICR_cord$ICR
+  } else {
+    stop("Invalid bedmeth version. Choose from 'v1', 'v2', or '450k'.")
+  }
+  
   # Ensure group_vector length matches number of samples (columns) in df_ICR
   if (length(group_vector) != ncol(df_ICR)) {
     stop("Length of 'group_vector' must match the number of samples (columns) in 'df_ICR'.")
   }
   
-  # Create annotation data frame
   group_vector <- factor(group_vector, levels = c(control_label, case_label))
-  annotation_data <- data.frame(Sample = colnames(df_ICR), Group = group_vector)
-  rownames(annotation_data) <- annotation_data$Sample
+  annotation_name <- if (!is.null(annotation_col)) names(annotation_col)[1] else "Sample"
   
-  # Define color palettes
-  beta_palette <- colorRampPalette(c("#785EF0", "white", "#9a031e"))(100)
-  delta_palette <- colorRampPalette(c("blue", "white", "red"))(100)
-  binary_palette <- c("white", "black")
+  # Create the annotation data
+  mat_col <- data.frame(group_vector)
+  colnames(mat_col) <- annotation_name
+  rownames(mat_col) <- colnames(df_ICR)
   
-  create_heatmap <- function(matrix_data, group_vector, title, color_palette, scale_limits = NULL) {
-    # Perform clustering if required
-    if (cluster_rows) {
-      row_dend <- hclust(dist(matrix_data), method = "ward.D2")
-      matrix_data <- matrix_data[order.dendrogram(as.dendrogram(row_dend)), , drop = FALSE]
+  unique_groups <- levels(group_vector)
+  if (is.null(annotation_col)) {
+    default_colors <- viridisLite::viridis(length(unique_groups))
+    annotation_col <- list(setNames(default_colors, unique_groups))
+    names(annotation_col) <- annotation_name
+  } else {
+    if (!is.list(annotation_col) || length(annotation_col[[1]]) != length(unique_groups)) {
+      stop("The 'annotation_col' list must have the same number of colors as the unique values in 'group_vector'.")
     }
-    
-    if (cluster_cols) {
-      col_dend <- hclust(dist(t(matrix_data)), method = "ward.D2")
-      matrix_data <- matrix_data[, order.dendrogram(as.dendrogram(col_dend)), drop = FALSE]
-    }
-    
-    df_melt <- melt(matrix_data)
-    colnames(df_melt) <- c("ICR", "Sample", "Value")
-    df_melt <- df_melt %>%
-      mutate(Group = group_vector[Sample])
-    
-    ggplot(df_melt, aes(x = Sample, y = ICR, fill = Value)) +
-      geom_tile() +
-      scale_fill_gradientn(colors = color_palette, limits = scale_limits) +
-      labs(title = title, x = "Sample", y = "ICR", fill = "Value") +
-      theme_minimal() +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    names(annotation_col[[1]]) <- unique_groups
   }
   
-  # Create Beta Heatmap
-  heatmap_beta <- create_heatmap(
-    matrix_data = df_ICR,
-    group_vector = annotation_data$Group,
-    title = "Methylation of Imprinted DMRs (Beta)",
-    color_palette = beta_palette,
-    scale_limits = c(0, 1)
-  )
+  # Define heatmap palette and breaks for beta values
+  paletteLength <- 100
+  betaColor <- colorRampPalette(c("#785EF0", "white", "#9a031e"))(paletteLength)
+  betaBreaks <- c(seq(0, 0.5, length.out = ceiling(paletteLength / 2) + 1), 
+                  seq(0.500001, 1, length.out = floor(paletteLength / 2)))
   
   # Calculate DeltaBeta matrix
   control_indices <- which(group_vector == control_label)
   control_means <- rowMeans(df_ICR[, control_indices, drop = FALSE])
   df_ICR_delta <- sweep(df_ICR, 1, control_means)
   
-  # Create Delta Beta Heatmap
-  heatmap_delta <- create_heatmap(
-    matrix_data = df_ICR_delta,
-    group_vector = annotation_data$Group,
-    title = "Delta Beta of Imprinted DMRs",
-    color_palette = delta_palette,
-    scale_limits = c(-0.5, 0.5)
-  )
+  # Define heatmap palette and breaks for delta values
+  deltaColor <- colorRampPalette(c("blue", "white", "red"))(paletteLength)
+  deltaBreaks <- seq(-0.5, 0.5, length.out = paletteLength + 1)
   
   # Calculate binary defect matrix
   df_mvalues <- log2(df_ICR / (1 - df_ICR))
@@ -94,20 +88,85 @@ iDMR_heatmap <- function(df_ICR, group_vector, control_label = "Control", case_l
   lower_threshold <- control_means_m - 3 * control_sds_m
   df_ICR_defect <- (df_mvalues > upper_threshold | df_mvalues < lower_threshold) * 1
   
-  # Create Defect Matrix Heatmap
-  heatmap_defect <- create_heatmap(
-    matrix_data = df_ICR_defect,
-    group_vector = annotation_data$Group,
-    title = "Defect Matrix of Imprinted DMRs",
-    color_palette = binary_palette,
-    scale_limits = c(0, 1)
-  )
+  # Define binary color palette
+  binaryColor <- c("white", "black")
   
-  # Return list of ggplot heatmaps
+  # Row clustering based on cluster_by parameter
+  row_clust <- if (cluster_by == "cord") FALSE else if (cluster_by == "meth") TRUE else {
+    stop("Please select a valid 'cluster_by' parameter: 'cord' to cluster by coordinates or 'meth' to cluster by methylation values.")
+  }
+  
+  # Generate heatmaps and capture each as a grob
+  heatmap_beta <- grid::grid.grabExpr({
+    pheatmap(
+      mat = df_ICR[odr, ],
+      annotation_col = mat_col,
+      annotation_colors = annotation_col,
+      color = betaColor,
+      breaks = betaBreaks,
+      border_color = "grey",
+      main = "Methylation of Imprinted DMRs (Beta)",
+      annotation_legend = TRUE,
+      annotation_names_col = FALSE,
+      annotation_names_row = FALSE,
+      drop_levels = FALSE,
+      fontsize = 8,
+      cluster_rows = row_clust,
+      cluster_cols = TRUE,
+      clustering_distance_rows = "euclidean",
+      clustering_distance_cols = "euclidean", 
+      clustering_method = "ward.D2"
+    )
+  })
+  
+  heatmap_delta <- grid::grid.grabExpr({
+    pheatmap(
+      mat = df_ICR_delta[odr, ],
+      annotation_col = mat_col,
+      annotation_colors = annotation_col,
+      color = deltaColor,
+      breaks = deltaBreaks,
+      border_color = "grey",
+      main = "Delta Beta of Imprinted DMRs",
+      annotation_legend = TRUE,
+      annotation_names_col = FALSE,
+      annotation_names_row = FALSE,
+      drop_levels = FALSE,
+      fontsize = 8,
+      cluster_rows = row_clust,
+      cluster_cols = TRUE,
+      clustering_distance_rows = "euclidean",
+      clustering_distance_cols = "euclidean", 
+      clustering_method = "ward.D2"
+    )
+  })
+  
+  heatmap_defect <- grid::grid.grabExpr({
+    pheatmap(
+      mat = df_ICR_defect[odr, ],
+      annotation_col = mat_col,
+      annotation_colors = annotation_col,
+      color = binaryColor,
+      border_color = "grey",
+      main = "Defect Matrix of Imprinted DMRs",
+      annotation_legend = TRUE,
+      annotation_names_col = FALSE,
+      annotation_names_row = FALSE,
+      drop_levels = FALSE,
+      fontsize = 8,
+      cluster_rows = row_clust,
+      cluster_cols = TRUE,
+      clustering_distance_rows = "euclidean",
+      clustering_distance_cols = "euclidean", 
+      clustering_method = "ward.D2"
+    )
+  })
+  
+  # Return list of heatmap grobs
   return(list(
-    heatmap_beta = heatmap_beta,
-    heatmap_delta = heatmap_delta,
-    heatmap_defect = heatmap_defect
+    heatmap_beta = grid.draw(heatmap_beta),
+    heatmap_delta = grid.draw(heatmap_delta),
+    heatmap_defect = grid.draw(heatmap_defect)
   ))
 }
 
