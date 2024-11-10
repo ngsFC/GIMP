@@ -4,6 +4,11 @@
 
 ![Logo](GIMP.logo.png)
 
+<div align="center">
+  <img src="GIMP.logo.png" alt="Logo" width="200"/>
+</div>
+
+
 **GIMP** (Genomic Imprinting Methylation Patterns) is an R package designed for the analysis of methylation arrays. It provides a pipeline for generating CpG sites, computing CpG coverage, and analyzing ICRs (Imprinting Control Regions) from methylation data. The package supports multiple platforms, including Illumina's 450k, EPIC v1, and EPIC v2 arrays.
 
 ## Installation
