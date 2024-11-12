@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_CpG_coverage.R
 \name{plot_CpG_coverage}
 \alias{plot_CpG_coverage}
-\title{Plot ICR CPG Matrix}
+\title{Plot ICR CpG Matrix with Counts and Percentage Coverage}
 \usage{
 plot_CpG_coverage(df_ICR_cpg, bedmeth = "v1")
 }
@@ -12,10 +12,11 @@ plot_CpG_coverage(df_ICR_cpg, bedmeth = "v1")
 \item{bedmeth}{A character string specifying the BED data version to use for mapping CpG coverage. Options are `"v1"` (EPIC v1), `"v2"` (EPIC v2), or `"450k"` (450k array). Default is `"v1"`.}
 }
 \value{
-A plot visualizing the CpG coverage for ICR regions based on the specified BED data.
+A list containing two plots (counts and percentage coverage) and the data frame with CpG counts and coverage information.
 }
 \description{
-This function plots the CpG coverage for Imprinted Control Regions (ICRs) using the provided data frame of CpG counts. It compares CpG counts in the specified BED data version for visual analysis.
+This function plots the CpG coverage for Imprinted Control Regions (ICRs) using the provided data frame of CpG counts.
+It compares CpG counts in the specified BED data version for visual analysis and includes an additional plot for percentage coverage.
 }
 \examples{
 plot_CpG_coverage(df_ICR_cpg_counts, bedmeth = "v1")
