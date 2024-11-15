@@ -4,6 +4,7 @@ export(make_ICRs)
 export(create_bedmeth)
 export(plot_CpG_coverage)
 export(iDMR_heatmap)
+export(iDMPs)
 
 # Import functions from other packages
 import(shiny)
