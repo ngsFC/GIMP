@@ -1,22 +1,16 @@
 iDMPs <- function(data, sampleInfo, pValueCutoff = 0.05) {
-  # Load necessary libraries
-  library(limma)
   
-  # Ensure sampleInfo is a factor
   sampleInfo <- factor(sampleInfo)
   
-  # Automatically reorder levels to have "Control" as the reference level
   if (!"Control" %in% levels(sampleInfo)) {
     stop("The 'Control' group must be present in sampleInfo.")
   }
   sampleInfo <- relevel(sampleInfo, ref = "Control")
   
-  # Validate and split data into methylation values and additional columns
-  if (!is.matrix(data)) {
-    stop("The input data must be a matrix or data frame.")
+  if (!is.data.frame(data)) {
+    stop("The input data must be a data frame.")
   }
   
-  # Extract methylation data (assumed all columns except the last four)
   if (ncol(data) < 5) {
     stop("The data must have at least four additional columns: 'cstart', 'ICR', 'start', 'end'.")
   }
