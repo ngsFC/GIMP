@@ -14,7 +14,6 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo) {
   
   methylationData <- regionCpGs[, 1:(ncol(regionCpGs) - 4)]
   annotationData <- regionCpGs[, (ncol(regionCpGs) - 3):ncol(regionCpGs)]
-  
   methylationData$cstart <- annotationData$cstart
   methylationDataLong <- reshape2::melt(methylationData, id.vars = "cstart", variable.name = "Sample", value.name = "Methylation")
   
@@ -22,18 +21,20 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo) {
   methylationDataLong$IsDMP <- methylationDataLong$cstart %in% regionDMPs$cstart
   
   plot <- ggplot(methylationDataLong, aes(x = cstart, y = Methylation, group = Sample, color = Type)) +
-    geom_line(aes(linetype = Type), alpha = 0.7) +  # Line plot for each sample
-    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], aes(shape = IsDMP), size = 3) +  # Highlight DMPs
+    geom_line(aes(linetype = Type), alpha = 0.5) +  # Adjusted alpha for lines to enhance comparability
+    geom_point(aes(shape = IsDMP, color = Type), size = 1.5, color = "grey") +  # Smaller grey points for all CpGs
+    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 2.5, color = "black") +  # Slightly larger black points for DMPs
     geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
     scale_color_manual(values = c("Control" = "grey", "Case" = "red")) +
     scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
     labs(
-      title = paste("Methylation in Region:", ICR),
+      title = ICR,  # Only show the ICR region name as title
       x = "CpG Coordinates",
       y = "Methylation Value"
     ) +
     theme_minimal()
   
+  # Return the plot
   return(plot)
 }
 
