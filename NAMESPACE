@@ -5,6 +5,7 @@ export(create_bedmeth)
 export(plot_CpG_coverage)
 export(iDMR_heatmap)
 export(iDMPs)
+export(plot_line_region)
 
 # Import functions from other packages
 import(shiny)

@@ -33,4 +33,16 @@ iDMR_heatmap(df.ICR,
              plot_type = "defect",
              sd_threshold = 3)
 
+dmps <- iDMPs(
+  data = ICRcpg,
+  sampleInfo = c(rep("Case", 13), rep("Control", 24)), 
+  pValueCutoff = 0.05
+)
 
+significantDMPs <- dmps$topDMPs
+print(significantDMPs)
+
+sampleInfo <- c(rep("Case", 13), rep("Control", 24))
+
+plot <- plot_line_re(significantDMPs, ICRcpg, ICR = "KCNQ1OT1:TSS-DMR", sampleInfo = sampleInfo)
+print(plot)
