@@ -1,4 +1,5 @@
 plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo) {
+  
   regionDMPs <- significantDMPs[significantDMPs$ICR == ICR, ]
   if (nrow(regionDMPs) == 0) {
     stop("No significant DMPs found for the specified ICR.")
@@ -22,13 +23,13 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo) {
   
   plot <- ggplot(methylationDataLong, aes(x = cstart, y = Methylation, group = Sample, color = Type)) +
     geom_line(aes(linetype = Type), alpha = 0.5) +  # Adjusted alpha for lines to enhance comparability
-    geom_point(data = methylationDataLong[!methylationDataLong$IsDMP, ], size = 1, color = "grey") +  # Smaller grey points for non-DMP CpGs
-    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 1.5, color = "black") +  # Slightly larger black points for DMPs
-    geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
+    geom_point(size = 1, color = "grey") +  # Grey points for all CpGs
+    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], shape = 21, size = 2.5, fill = "red", color = "black") +  # Larger, distinct shape for DMPs
+    geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "blue", linetype = "dashed") +  # Blue dashed lines for DMPs
     scale_color_manual(values = c("Control" = "grey", "Case" = "red")) +
     scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
     labs(
-      title = ICR,  # Only show the ICR region name as title
+      title = ICR,
       x = "CpG Coordinates",
       y = "Methylation Value"
     ) +
