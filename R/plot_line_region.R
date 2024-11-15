@@ -26,7 +26,7 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo) {
     geom_point(data = methylationDataLong[!methylationDataLong$IsDMP, ], size = 0.5, color = "grey") +  
     geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 0.5, color = "grey") + 
     geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
-    geom_rug(data = methylationDataLong[methylationDataLong$IsDMP, ], aes(x = cstart), color = "red", sides = "b") +  # Added geom_rug for DMPs
+    geom_rug(data = methylationDataLong[methylationDataLong$IsDMP, ], aes(x = cstart), color = "red", sides = "t") +  # Rug on top
     scale_color_manual(values = c("Control" = "grey", "Case" = "red")) +
     scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
     labs(
