@@ -23,8 +23,8 @@ regionDMPs <- significantDMPs[significantDMPs$ICR == ICR, ]
   
   plot <- ggplot(methylationDataLong, aes(x = cstart, y = Methylation, group = Sample, color = Type)) +
     geom_line(aes(linetype = Type), alpha = 0.5) +  # Adjusted alpha for lines to enhance comparability
-    geom_point(data = methylationDataLong[!methylationDataLong$IsDMP, ], size = 1, color = "grey") +  # Smaller grey points for non-DMP CpGs
-    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 1.5, color = "black") +  # Slightly larger black points for DMPs
+    geom_point(data = methylationDataLong[!methylationDataLong$IsDMP, ], size = 0.5, color = "grey") +  
+    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 0.5, color = "black") + 
     geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
     scale_color_manual(values = c("Control" = "grey", "Case" = "red")) +
     scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
