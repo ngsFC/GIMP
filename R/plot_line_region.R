@@ -15,7 +15,7 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo) {
   methylationData <- regionCpGs[, 1:(ncol(regionCpGs) - 4)]
   annotationData <- regionCpGs[, (ncol(regionCpGs) - 3):ncol(regionCpGs)]
   
-  ìmethylationData$cstart <- annotationData$cstart
+  methylationData$cstart <- annotationData$cstart
   methylationDataLong <- reshape2::melt(methylationData, id.vars = "cstart", variable.name = "Sample", value.name = "Methylation")
   methylationDataLong$Type <- rep(sampleInfo, each = nrow(methylationData))
   methylationDataLong$IsDMP <- methylationDataLong$cstart %in% regionDMPs$cstart
