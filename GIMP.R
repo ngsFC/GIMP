@@ -44,5 +44,5 @@ print(significantDMPs)
 
 sampleInfo <- c(rep("Case", 13), rep("Control", 24))
 
-plot <- plot_line_re(significantDMPs, ICRcpg, ICR = "KCNQ1OT1:TSS-DMR", sampleInfo = sampleInfo)
+plot <- plot_line_region(significantDMPs, ICRcpg, ICR = "KCNQ1OT1:TSS-DMR", sampleInfo = sampleInfo, interactive = T)
 print(plot)
