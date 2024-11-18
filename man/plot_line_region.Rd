@@ -27,22 +27,6 @@ Users can choose between a static `ggplot2` plot or an interactive `plotly` plot
 }
 \examples{
 # Example data for significantDMPs
-significantDMPs <- data.frame(
-  ICR = c("ICR1", "ICR1", "ICR2"),
-  start = c(100, 200, 150),
-  end = c(150, 250, 200)
-)
-
-# Example data for ICRcpg
-ICRcpg <- data.frame(
-  CpG1 = runif(10, 0, 1), CpG2 = runif(10, 0, 1),
-  cstart = seq(100, 190, by = 10)
-)
-
-# Example sample info
-sampleInfo <- c("Control", "Case")
-
-# Plot methylation for a specific ICR region
-plot <- plot_line_region(significantDMPs, ICRcpg, ICR = "ICR1", sampleInfo = sampleInfo, interactive = TRUE)
-plot
+plot <- plot_line_region(significantDMPs, ICRcpg, ICR = "KCNQ1OT1:TSS-DMR", sampleInfo = sampleInfo, interactive = T)
+print(plot)
 }

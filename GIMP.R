@@ -13,9 +13,10 @@ library(pheatmap)
 library(viridisLite)
 library(ggplotify)
 library(limma)
+library(plotly)
 
 setwd("/home/ciccio/Desktop/project/data")
-df <- readRDS("BWSimp.rds")
+df <- readRDS("../BWSimp.rds")
 
 ICRcpg <- make_cpgs(Bmatrix = df, bedmeth = "v1")
 
@@ -26,7 +27,7 @@ cpgs_analysis$plot_percentage
 df.ICR <- make_ICRs(Bmatrix = df, bedmeth = "v1")
 
 iDMR_heatmap(df.ICR, 
-             group_vector = c(rep("Case", 13), rep("Control", 24)),
+             sampleInfo = c(rep("Case", 13), rep("Control", 24)),
              control_label = "Control", 
              case_label = "Case",
              order_by = "meth",
