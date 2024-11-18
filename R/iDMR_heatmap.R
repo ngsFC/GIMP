@@ -19,11 +19,12 @@
 #' @examples
 #' # Example sampleInfo with "Case" and "Control" labels for each sample
 #' sampleInfo <- c(rep("Case", 10), rep("Control", 10))
-#' DMR_heatmap(df_ICR = my_ICR_data, sampleInfo = sampleInfo, annotation_col = list(Sample = c("darkgreen", "darkred")))
+#' iDMR_heatmap(df_ICR = my_ICR_data, sampleInfo = sampleInfo, annotation_col = list(Sample = c("darkgreen", "darkred")))
 #' @export
 
 iDMR_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_label = "Case", bedmeth = "v1", order_by = "cord", annotation_col = NULL, plot_type = "beta", sd_threshold = 3) {
   
+  cls_distance = "euclidean" # setting default cluster distance
   # Load BED data based on bedmeth version
   if (bedmeth == "v1" || bedmeth == "450k") {
     data(DMRs.hg19)
@@ -40,6 +41,14 @@ iDMR_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_lab
   # Ensure sampleInfo length matches number of samples in input data
   if (length(sampleInfo) != ncol(df_ICR)) {
     stop("Length of 'sampleInfo' must match the number of samples (columns) in 'df_ICR'.")
+  }
+  # Ensure plot_type parameter is valid
+  if (!plot_type %in% c("beta", "delta", "defect")) {
+    stop("Invalid plot_type. Choose from 'beta', 'delta', or 'defect'.")
+  }
+  # Ensure order_by parameter is valid
+  if (!order_by %in% c("cord", "meth")) {
+    stop("Invalid order_by. Choose from 'cord' or 'meth'.")
   }
   
   sampleInfo <- factor(sampleInfo, levels = c(control_label, case_label))
@@ -95,6 +104,7 @@ iDMR_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_lab
     colorPalette <- c("white", "black")
     breaks <- NULL  # No breaks needed for binary data
     main_title <- "Defect Matrix of Imprinted DMRs"
+    cls_distance = "binary" # Updating cluster distance to binary
     
   } else {
     stop("Invalid plot_type. Choose from 'beta', 'delta', or 'defect'.")
@@ -122,7 +132,7 @@ iDMR_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_lab
     cluster_rows = row_clust,
     cluster_cols = TRUE,
     clustering_distance_rows = if (plot_type == "defect") "binary" else "euclidean",
-    clustering_distance_cols = "euclidean", 
+    clustering_distance_cols = cls_distance, 
     clustering_method = "ward.D2"
   ) %>% as.ggplot()
 }

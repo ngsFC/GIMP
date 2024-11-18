@@ -45,58 +45,25 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo, interacti
   methylationDataLong$Type <- rep(sampleInfo, each = nrow(methylationData))
   methylationDataLong$IsDMP <- methylationDataLong$cstart %in% regionDMPs$cstart
   
-  if (interactive) {
-    # Create an interactive plotly plot
-    plot <- plot_ly(
-      data = methylationDataLong,
-      x = ~cstart,
-      y = ~Methylation,
-      color = ~Type,
-      colors = c("Control" = "grey", "Case" = "red"),
-      type = "scatter",
-      mode = "lines+markers",
-      text = ~paste("Sample:", Sample, "<br>Methylation:", Methylation, "<br>CpG Start:", cstart),
-      hoverinfo = "text"
-    ) %>%
-      add_markers(
-        data = methylationDataLong[methylationDataLong$IsDMP, ],
-        x = ~cstart,
-        y = ~Methylation,
-        marker = list(color = "black", size = 6),
-        name = "DMPs"
-      ) %>%
-      layout(
-        title = list(text = paste("Methylation for", ICR), x = 0.5),
-        xaxis = list(title = "CpG Coordinates"),
-        yaxis = list(title = "Methylation Value"),
-        legend = list(orientation = "h", x = 0.5, y = -0.2, xanchor = "center"),
-        shapes = lapply(
-          regionDMPs$cstart,
-          function(x) list(
-            type = "line",
-            x0 = x, x1 = x, y0 = 0, y1 = 1,
-            line = list(dash = "dash", width = 1, color = "lightgrey")
-          )
-        )
-      )
-  } else {
-    # Create a static ggplot
-    plot <- ggplot(methylationDataLong, aes(x = cstart, y = Methylation, group = Sample, color = Type)) +
-      geom_line(aes(linetype = Type), alpha = 0.5) +
-      geom_point(data = methylationDataLong[!methylationDataLong$IsDMP, ], size = 0.5, color = "grey") +
-      geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 0.5, color = "grey") +
-      geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
-      geom_rug(data = methylationDataLong[methylationDataLong$IsDMP, ], aes(x = cstart), color = "red", sides = "t") +
-      scale_color_manual("", values = c("Control" = "grey", "Case" = "red")) +
-      scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
-      labs(
-        title = ICR,
-        x = "CpG Coordinates",
-        y = "Methylation Value"
-      ) +
-      theme_minimal() +
-      theme(legend.position = "bottom")
-  }
+  plot <- ggplot(methylationDataLong, aes(x = cstart, y = Methylation, group = Sample, color = Type)) +
+    geom_line(aes(linetype = Type), alpha = 0.5) +
+    geom_point(data = methylationDataLong[!methylationDataLong$IsDMP, ], size = 0.5, color = "grey") +
+    geom_point(data = methylationDataLong[methylationDataLong$IsDMP, ], size = 0.5, color = "grey") +
+    geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
+    geom_rug(data = methylationDataLong[methylationDataLong$IsDMP, ], aes(x = cstart), color = "red", sides = "t") +
+    scale_color_manual("", values = c("Control" = "grey", "Case" = "red")) +
+    scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
+    labs(
+      title = ICR,
+      x = "CpG Coordinates",
+      y = "Methylation Value"
+    ) +
+    theme_minimal() +
+    theme(legend.position = "bottom")
   
-  return(plot)
+  if (interactive) {
+    plot <- ggplotly(plot) # Converting to interactive plot
+  }
+    return(plot)
+  
 }
