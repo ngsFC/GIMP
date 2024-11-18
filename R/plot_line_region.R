@@ -52,7 +52,7 @@ plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo, interacti
     geom_vline(data = data.frame(x = regionDMPs$cstart), aes(xintercept = x), color = "lightgrey", linetype = "dashed") +
     geom_rug(data = methylationDataLong[methylationDataLong$IsDMP, ], aes(x = cstart), color = "red", sides = "t") +
     scale_color_manual("", values = c("Control" = "grey", "Case" = "red")) +
-    scale_linetype_manual(values = c("Control" = "solid", "Case" = "solid")) +
+    scale_linetype_manual("", values = c("Control" = "solid", "Case" = "solid")) +
     labs(
       title = ICR,
       x = "CpG Coordinates",
