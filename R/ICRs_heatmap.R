@@ -1,8 +1,8 @@
-#' Generate Heatmap of Imprinted DMRs Methylation
+#' Generate Heatmap of ICRs Methylation
 #'
-#' This function generates a heatmap for visualizing methylation data of Imprinted Differentially Methylated Regions (DMRs).
+#' This function generates a heatmap for visualizing methylation data of ICRs.
 #'
-#' @param df_ICR A data frame or matrix containing methylation beta values for Imprinted DMRs.
+#' @param df_ICR A data frame or matrix containing methylation beta values for ICRs.
 #' @param sampleInfo A vector indicating the group labels (e.g., "Control" and "Case") for each sample in `df_ICR`.
 #' Each element in `sampleInfo` should correspond to a sample in `df_ICR`.
 #' @param control_label A character string specifying the label for the control group in `sampleInfo`. Default is `"Control"`.
@@ -12,17 +12,17 @@
 #' @param annotation_col A named list of colors for each unique value in `sampleInfo`. If `NULL`, default colors are assigned using the "viridis" palette. Default is `NULL`.
 #' @param plot_type A character string specifying the type of heatmap to generate. Options are `"beta"` for beta values, `"delta"` for values normalized against controls, and `"defect"` for defect matrix based on standard deviations. Default is `"beta"`.
 #' @param sd_threshold A numeric value specifying the standard deviation threshold for detecting defects in the defect matrix. Only used if `plot_type` is `"defect"`. Default is `3`.
-#' @return A heatmap plot visualizing methylation of Imprinted DMRs.
+#' @return A heatmap plot visualizing methylation of ICRs.
 #' @import pheatmap
 #' @import viridisLite
 #' @import ggplotify
 #' @examples
 #' # Example sampleInfo with "Case" and "Control" labels for each sample
 #' sampleInfo <- c(rep("Case", 10), rep("Control", 10))
-#' iDMR_heatmap(df_ICR = my_ICR_data, sampleInfo = sampleInfo, annotation_col = list(Sample = c("darkgreen", "darkred")))
+#' ICRs_heatmap(df_ICR = my_ICR_data, sampleInfo = sampleInfo, annotation_col = list(Sample = c("darkgreen", "darkred")))
 #' @export
 
-iDMR_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_label = "Case", bedmeth = "v1", order_by = "cord", annotation_col = NULL, plot_type = "beta", sd_threshold = 3) {
+ICRs_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_label = "Case", bedmeth = "v1", order_by = "cord", annotation_col = NULL, plot_type = "beta", sd_threshold = 3) {
   
   cls_distance = "euclidean" # setting default cluster distance
   # Load BED data based on bedmeth version

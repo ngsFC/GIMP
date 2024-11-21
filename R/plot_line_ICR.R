@@ -1,6 +1,6 @@
-#' Plot Line Plot for Imprinted DMR Methylations
+#' Plot Line Plot for ICR Methylation
 #'
-#' This function generates a line plot to visualize methylation values across a specified Imprinted Differentially Methylated Region (ICR).
+#' This function generates a line plot to visualize methylation values across a specified ICR.
 #' Users can choose between a static `ggplot2` plot or an interactive `plotly` plot.
 #'
 #' @param significantDMPs A data frame containing information about significant DMPs. Must include columns `ICR`, `start`, and `end`.
@@ -12,11 +12,11 @@
 #' The plot is either a `ggplot2` object or a `plotly` object, depending on the value of `interactive`.
 #' @examples
 #' # Example data for significantDMPs
-#' plot <- plot_line_region(significantDMPs, ICRcpg, ICR = "KCNQ1OT1:TSS-DMR", sampleInfo = sampleInfo, interactive = T)
+#' plot <- plot_line_ICR(significantDMPs, ICRcpg, ICR = "KCNQ1OT1:TSS-DMR", sampleInfo = sampleInfo, interactive = T)
 #' print(plot)
 #' @export
 
-plot_line_region <- function(significantDMPs, ICRcpg, ICR, sampleInfo, interactive = TRUE) {
+plot_line_ICR <- function(significantDMPs, ICRcpg, ICR, sampleInfo, interactive = TRUE) {
   library(ggplot2)
   library(reshape2)
   if (interactive) library(plotly)

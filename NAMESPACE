@@ -2,10 +2,10 @@
 export(make_cpgs)
 export(make_ICRs)
 export(create_bedmeth)
-export(plot_CpG_coverage)
-export(iDMR_heatmap)
+export(plot_cpgs_coverage)
+export(ICRs_heatmap)
 export(iDMPs)
-export(plot_line_region)
+export(plot_line_ICR)
 
 # Import functions from other packages
 import(shiny)
