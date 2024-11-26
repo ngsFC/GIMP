@@ -14,7 +14,7 @@
 To install GIMP package directly from GitHub, you will need devtools package.
 
 ```r
-install.packages("devtools) # install devtools if you do not have it
+install.packages("devtools") # install devtools if you do not have it
 devtools::install_github("ngsFC/GIMP") # install GIMP
 
 library(GIMP)
