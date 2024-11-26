@@ -3,7 +3,7 @@
 [![R](https://img.shields.io/badge/R-4.0+-blue.svg)](https://cran.r-project.org/)
 
 <div align="center">
-  <img src="GIMP.log.png" alt="Logo" width="200"/>
+  <img src="GIMP.logo.png" alt="Logo" width="200"/>
 </div>
 
 
