@@ -9,6 +9,17 @@
 
 **GIMP** (Genomic Imprinting Methylation Patterns) is an R package designed for the analysis of ICRs (Imprinting Control Regions) from methylation array data. It provides a pipeline for extract imprinted CpGs (iCpGs), computing coverage, and analyzing ICRs in probe and sample specific manner. The package supports multiple platforms, including Illumina's 450k, EPIC v1, and EPIC v2 arrays.
 
+### Installation
+
+To install GIMP package directly from GitHub, you will need devtools package.
+
+```r
+install.packages("devtools) # install devtools if you do not have it
+devtools::install_github("ngsFC/GIMP") # install GIMP
+
+library(GIMP)
+```
+
 ### Dependencies
 
 The GIMP package depends on the following R packages:
