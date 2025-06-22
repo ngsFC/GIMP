@@ -22,3 +22,8 @@ Depends:
     shiny,
     plotly,
     BiocManager
+Imports:
+    shiny,
+    shinydashboard,
+    DT,
+    plotly
