@@ -412,12 +412,6 @@ The GIMP package was developed by Francesco Cecere. We gratefully acknowledge:
 
 GIMP is released under the MIT License. See LICENSE file for details.
 
-## Contact
-
-- **Maintainer**: Francesco Cecere
-- **Email**: francesco.cecerengs@gmail.com
-- **GitHub**: [https://github.com/ngsFC/GIMP](https://github.com/ngsFC/GIMP)
-
 ---
 
 **Keywords**: DNA methylation, genomic imprinting, IDAT processing, Illumina arrays, ICR analysis, R package, Bioconductor, shiny application
