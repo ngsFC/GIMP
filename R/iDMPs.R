@@ -11,28 +11,82 @@ iDMPs <- function(data, sampleInfo, pValueCutoff = 0.05) {
     stop("The input data must be a data frame.")
   }
   
-  if (ncol(data) < 5) {
-    stop("The data must have at least four additional columns: 'cstart', 'ICR', 'start', 'end'.")
+  # Identify annotation columns more robustly ***
+  # Look for the expected annotation columns
+  expected_annotation_cols <- c("cstart", "ICR", "start", "end")
+  annotation_col_indices <- which(colnames(data) %in% expected_annotation_cols)
+  
+  if (length(annotation_col_indices) == 0) {
+    stop("No annotation columns found. Expected columns: cstart, ICR, start, end")
   }
   
-  methylationData <- as.matrix(data[, -c((ncol(data) - 3):ncol(data))])
-  additionalColumns <- data[, (ncol(data) - 3):ncol(data)]
+  # Separate methylation data from annotation properly ***
+  # All columns except the annotation columns are methylation data
+  methylation_col_indices <- setdiff(1:ncol(data), annotation_col_indices)
   
-  expectedColumns <- c("cstart", "ICR", "start", "end")
-  if (!all(expectedColumns %in% colnames(additionalColumns))) {
-    stop(paste("The last four columns of the data must be named:", paste(expectedColumns, collapse = ", ")))
+  if (length(methylation_col_indices) == 0) {
+    stop("No methylation data columns found.")
   }
   
+  methylationData <- as.matrix(data[, methylation_col_indices])
+  additionalColumns <- data[, annotation_col_indices, drop = FALSE]
+  
+  # Ensure we have the expected annotation columns
+  missing_cols <- setdiff(expected_annotation_cols, colnames(additionalColumns))
+  if (length(missing_cols) > 0) {
+    stop(paste("Missing annotation columns:", paste(missing_cols, collapse = ", ")))
+  }
+  
+  # Check dimensions match ***
+  if (ncol(methylationData) != length(sampleInfo)) {
+    stop(paste("Number of samples in methylation data (", ncol(methylationData), 
+               ") doesn't match sampleInfo length (", length(sampleInfo), ")"))
+  }
+  
+  # Improved beta to M-value conversion with error handling ***
   betaToM <- function(beta) {
-    if (any(beta <= 0 | beta >= 1)) {
-      stop("Beta values must be between 0 and 1 (exclusive).")
-    }
+    # Handle edge cases
+    beta[beta <= 0] <- 0.001
+    beta[beta >= 1] <- 0.999
     log2(beta / (1 - beta))
   }
   
+  # Remove rows with too many NAs ***
+  # Remove CpGs that have more than 50% missing values
+  na_proportion <- apply(methylationData, 1, function(x) sum(is.na(x)) / length(x))
+  valid_rows <- na_proportion < 0.5
+  
+  if (sum(valid_rows) == 0) {
+    stop("No CpGs with sufficient data found.")
+  }
+  
+  cat("Removing", sum(!valid_rows), "CpGs with >50% missing values\n")
+  cat("Analyzing", sum(valid_rows), "CpGs\n")
+  
+  methylationData <- methylationData[valid_rows, ]
+  additionalColumns <- additionalColumns[valid_rows, ]
+  
+  # Convert to M-values
   mValues <- betaToM(methylationData)
   
+  # Handle remaining NAs in M-values ***
+  # Impute remaining NAs with row means
+  for (i in 1:nrow(mValues)) {
+    if (any(is.na(mValues[i, ]))) {
+      row_mean <- mean(mValues[i, ], na.rm = TRUE)
+      if (!is.na(row_mean)) {
+        mValues[i, is.na(mValues[i, ])] <- row_mean
+      }
+    }
+  }
+  
+  # Create design matrix
   design <- model.matrix(~sampleInfo)
+  
+  # Add row names to ensure proper matching ***
+  rownames(mValues) <- rownames(data)[valid_rows]
+  
+  # Fit linear model
   fit <- lmFit(mValues, design)
   eBayesfit <- eBayes(fit)
   
@@ -43,14 +97,24 @@ iDMPs <- function(data, sampleInfo, pValueCutoff = 0.05) {
     stop(paste("Coefficient", coefName, "not found in the fit model. Check group labels."))
   }
   
-  topDMPs <- topTable(eBayesfit, number = Inf, p.value = pValueCutoff, coef = coefName)
-  topDMPs <- cbind(topDMPs, additionalColumns[rownames(topDMPs), , drop = FALSE])
+  # Get all results first, then filter ***
+  allResults <- topTable(eBayesfit, number = Inf, coef = coefName, sort.by = "P")
+  
+  # Add annotation columns back to results
+  # Match by row names
+  matched_indices <- match(rownames(allResults), rownames(additionalColumns))
+  topDMPs_with_annotation <- cbind(allResults, additionalColumns[matched_indices, ])
+  
+  # Filter by p-value
+  significantDMPs <- topDMPs_with_annotation[topDMPs_with_annotation$P.Value <= pValueCutoff, ]
+  
+  cat("Found", nrow(significantDMPs), "significant DMPs at p <", pValueCutoff, "\n")
   
   return(list(
     fit = fit,
     eBayesfit = eBayesfit,
-    topDMPs = topDMPs,
+    topDMPs = significantDMPs,
+    allResults = topDMPs_with_annotation,  # Include all results for reference
     groupLabels = groupLabels
   ))
 }
-
