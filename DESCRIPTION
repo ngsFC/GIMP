@@ -1,9 +1,16 @@
 Package: GIMP
-Title: Genomic Imprinting Methylation Patterns 
-Version: 0.1.0
+Title: Genomic Imprinting Methylation Patterns
+Version: 0.2.0
 Author: Francesco Cecere <francesco.cecerengs@gmail.com>
-Maintainer: Francesco Cecere <francesco.cecerengs@gmail.com>
-Description: A package for analyzing Imprinting Control Regions (ICRs) DNA methylation
+Authors@R: c(
+    person(given = "Francesco", family = "Cecere", role = "cre",
+           email = "francesco.cecerengs@gmail.com"),
+    person(given = "Abu", family = "Saadat", role = "cre",
+           email = "saadatabu1996@gmail.com"))
+Description: A package for analyzing Imprinting Control Regions (ICRs) DNA methylation.
+    Supports both processed methylation data and raw IDAT files from Illumina arrays.
+    Provides specialized tools for imprinting analysis including defect detection
+    and interactive visualizations.
 License: MIT
 Encoding: UTF-8
 LazyData: true
@@ -21,9 +28,25 @@ Depends:
     readr,
     shiny,
     plotly,
-    BiocManager
+    BiocManager,
+    minfi
 Imports:
     shiny,
     shinydashboard,
     DT,
-    plotly
+    plotly,
+    minfi,
+    IlluminaHumanMethylation450kanno.ilmn12.hg19,
+    IlluminaHumanMethylationEPICanno.ilm10b4.hg19,
+    IlluminaHumanMethylationEPICv2anno.20a1.hg38,
+    readxl,
+    tools,
+    utils,
+    stats
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
+biocViews: DNAMethylation, MicroArray, Preprocessing, QualityControl,
+    DifferentialMethylation, Epigenetics, GenomicImprinting
