@@ -94,7 +94,7 @@ server <- function(input, output, session) {
       
       removeModal()
       
-      showNotification("Data processed successfully!", type = "success")
+      showNotification("Data processed successfully!", type = "message")
       
     }, error = function(e) {
       removeModal()
@@ -113,7 +113,7 @@ server <- function(input, output, session) {
     ))
     
     tryCatch({
-      values$cpgs_analysis <- plot_CpG_coverage(values$ICRcpg, bedmeth = input$arrayType)
+      values$cpgs_analysis <- plot_cpgs_coverage(values$ICRcpg, bedmeth = input$arrayType)
       
       removeModal()
       
@@ -140,8 +140,20 @@ server <- function(input, output, session) {
   })
   
   # ICR Heatmap
+  # ICR Heatmap
   observeEvent(input$generateHeatmap, {
     req(values$df.ICR, values$sampleInfo)
+    
+    # Add validation
+    if (is.null(values$df.ICR) || nrow(values$df.ICR) == 0) {
+      showNotification("No ICR data available. Please process data first.", type = "error")
+      return()
+    }
+    
+    if (is.null(values$sampleInfo) || length(values$sampleInfo) != ncol(values$df.ICR)) {
+      showNotification("Sample information doesn't match data dimensions.", type = "error")
+      return()
+    }
     
     showModal(modalDialog(
       title = "Generating Heatmap",
@@ -149,41 +161,10 @@ server <- function(input, output, session) {
       footer = NULL
     ))
     
-    output$icrHeatmap <- renderPlot({
-      tryCatch({
-        # Note: Fix function name if needed (iDMR_heatmap vs ICRs_heatmap)
-        p <- iDMR_heatmap(
-          values$df.ICR,
-          sampleInfo = values$sampleInfo,
-          control_label = "Control",
-          case_label = "Case",
-          bedmeth = input$arrayType,
-          order_by = input$orderBy,
-          plot_type = input$plotType,
-          sd_threshold = ifelse(input$plotType == "defect", input$sdThreshold, 3)
-        )
-        
-        removeModal()
-        
-        print(p)
-        
-      }, error = function(e) {
-        removeModal()
-        showNotification(paste("Error:", e$message), type = "error", duration = 10)
-        NULL
-      })
-    }, height = 800)
-  })
-  
-  # Download heatmap
-  output$downloadHeatmap <- downloadHandler(
-    filename = function() {
-      paste0("ICR_heatmap_", input$plotType, "_", Sys.Date(), ".pdf")
-    },
-    content = function(file) {
-      pdf(file, width = 12, height = 10)
-      p <- iDMR_heatmap(
-        values$df.ICR,
+    tryCatch({
+      # Generate the heatmap
+      p <- ICRs_heatmap(
+        df_ICR = values$df.ICR,
         sampleInfo = values$sampleInfo,
         control_label = "Control",
         case_label = "Case",
@@ -192,8 +173,61 @@ server <- function(input, output, session) {
         plot_type = input$plotType,
         sd_threshold = ifelse(input$plotType == "defect", input$sdThreshold, 3)
       )
-      print(p)
-      dev.off()
+      
+      # Render the plot
+      output$icrHeatmap <- renderPlot({
+        print(p)
+      }, height = 800)
+      
+      removeModal()
+      showNotification("Heatmap generated successfully!", type = "message")
+      
+    }, error = function(e) {
+      removeModal()
+      
+      # More detailed error reporting
+      error_msg <- paste("Heatmap generation failed:", e$message)
+      showNotification(error_msg, type = "error", duration = 15)
+      
+      # Print detailed error to console for debugging
+      cat("=== HEATMAP ERROR DETAILS ===\n")
+      cat("Error message:", e$message, "\n")
+      cat("df_ICR dimensions:", dim(values$df.ICR), "\n")
+      cat("sampleInfo:", paste(values$sampleInfo, collapse = ", "), "\n")
+      cat("arrayType:", input$arrayType, "\n")
+      cat("orderBy:", input$orderBy, "\n")
+      cat("plotType:", input$plotType, "\n")
+      if (input$plotType == "defect") {
+        cat("sdThreshold:", input$sdThreshold, "\n")
+      }
+      cat("============================\n")
+      print(traceback())
+    })
+  })
+  
+  # Download heatmap - also fix this
+  output$downloadHeatmap <- downloadHandler(
+    filename = function() {
+      paste0("ICR_heatmap_", input$plotType, "_", Sys.Date(), ".pdf")
+    },
+    content = function(file) {
+      tryCatch({
+        pdf(file, width = 12, height = 10)
+        p <- ICRs_heatmap(
+          df_ICR = values$df.ICR,
+          sampleInfo = values$sampleInfo,
+          control_label = "Control",
+          case_label = "Case",
+          bedmeth = input$arrayType,
+          order_by = input$orderBy,
+          plot_type = input$plotType,
+          sd_threshold = ifelse(input$plotType == "defect", input$sdThreshold, 3)
+        )
+        print(p)
+        dev.off()
+      }, error = function(e) {
+        showNotification(paste("Download failed:", e$message), type = "error", duration = 10)
+      })
     }
   )
   
@@ -280,45 +314,131 @@ server <- function(input, output, session) {
   observeEvent(input$plotRegion, {
     req(input$selectedICR, values$dmps_results, values$ICRcpg)
     
+    # Validation checks
+    if (is.null(input$selectedICR) || input$selectedICR == "") {
+      showNotification("Please select an ICR first.", type = "warning")
+      return()
+    }
+    
+    if (nrow(values$dmps_results$topDMPs) == 0) {
+      showNotification("No significant DMPs available for plotting.", type = "warning")
+      return()
+    }
+    
     showModal(modalDialog(
       title = "Generating Plot",
       "Creating region plot...",
       footer = NULL
     ))
     
+    # Clear previous plots
+    output$regionPlot <- renderPlot({ NULL })
+    output$regionPlotUI <- renderUI({ NULL })
+    
     tryCatch({
-      # Note: Fix function name if needed (plot_line_region vs plot_line_ICR)
+      # Debug information
+      cat("=== REGION PLOT DEBUG ===\n")
+      cat("Selected ICR:", input$selectedICR, "\n")
+      cat("Plot interactive:", input$plotInteractive, "\n")
+      cat("Available ICRs in DMPs:", paste(unique(values$dmps_results$topDMPs$ICR), collapse = ", "), "\n")
+      cat("ICRcpg dimensions:", dim(values$ICRcpg), "\n")
+      cat("Sample info length:", length(values$sampleInfo), "\n")
+      
+      # Check if selected ICR exists in DMPs
+      if (!input$selectedICR %in% values$dmps_results$topDMPs$ICR) {
+        stop(paste("Selected ICR", input$selectedICR, "not found in significant DMPs"))
+      }
+      
+      # Create the plot
+      plot_interactive <- as.logical(input$plotInteractive)
+      
       plot <- plot_line_ICR(
         significantDMPs = values$dmps_results$topDMPs,
         ICRcpg = values$ICRcpg,
         ICR = input$selectedICR,
         sampleInfo = values$sampleInfo,
-        interactive = as.logical(input$plotInteractive)
+        interactive = plot_interactive
       )
       
       removeModal()
       
-      output$regionPlotUI <- renderUI({
-        if (as.logical(input$plotInteractive)) {
-          plotlyOutput("regionPlot", height = "600px")
-        } else {
-          plotOutput("regionPlot", height = "600px")
-        }
-      })
-      
-      if (as.logical(input$plotInteractive)) {
-        output$regionPlot <- renderPlotly({
+      # Render the appropriate UI based on plot type
+      if (plot_interactive) {
+        output$regionPlotUI <- renderUI({
+          tagList(
+            h4(paste("Interactive Plot:", input$selectedICR)),
+            plotlyOutput("regionPlotInteractive", height = "600px"),
+            br(),
+            helpText("Use plotly controls to zoom, pan, and hover over data points.")
+          )
+        })
+        
+        output$regionPlotInteractive <- renderPlotly({
           plot
         })
       } else {
-        output$regionPlot <- renderPlot({
-          plot
+        output$regionPlotUI <- renderUI({
+          tagList(
+            h4(paste("Static Plot:", input$selectedICR)),
+            plotOutput("regionPlotStatic", height = "600px")
+          )
+        })
+        
+        output$regionPlotStatic <- renderPlot({
+          print(plot)
         }, height = 600)
       }
       
+      showNotification("Region plot generated successfully!", type = "message")
+      
     }, error = function(e) {
       removeModal()
-      showNotification(paste("Error:", e$message), type = "error", duration = 10)
+      
+      error_msg <- paste("Region plot failed:", e$message)
+      showNotification(error_msg, type = "error", duration = 15)
+      
+      # Detailed error logging
+      cat("=== REGION PLOT ERROR ===\n")
+      cat("Error message:", e$message, "\n")
+      cat("Selected ICR:", input$selectedICR, "\n")
+      cat("Interactive setting:", input$plotInteractive, "\n")
+      cat("DMPs available:", nrow(values$dmps_results$topDMPs), "\n")
+      
+      if (exists("values$dmps_results$topDMPs")) {
+        dmps_for_icr <- values$dmps_results$topDMPs[values$dmps_results$topDMPs$ICR == input$selectedICR, ]
+        cat("DMPs for selected ICR:", nrow(dmps_for_icr), "\n")
+      }
+      
+      if (exists("values$ICRcpg")) {
+        icr_cpgs <- values$ICRcpg[values$ICRcpg$ICR == input$selectedICR, ]
+        cat("CpGs for selected ICR:", nrow(icr_cpgs), "\n")
+      }
+      
+      cat("Stack trace:\n")
+      print(traceback())
+      cat("========================\n")
+      
+      # Show fallback message
+      output$regionPlotUI <- renderUI({
+        div(
+          style = "text-align: center; padding: 50px;",
+          h4("Plot Generation Failed", style = "color: red;"),
+          p("Error:", e$message),
+          p("Please try selecting a different ICR or check the console for detailed error information.")
+        )
+      })
+    })
+  })
+  
+  # Add a reset button for clearing plots
+  observeEvent(input$selectedICR, {
+    # Clear plots when ICR selection changes
+    output$regionPlotUI <- renderUI({
+      div(
+        style = "text-align: center; padding: 50px;",
+        h4("Select Plot Type and Click 'Plot Region'"),
+        p("Choose an ICR and plot type, then click the 'Plot Region' button to generate the visualization.")
+      )
     })
   })
 }

@@ -5,12 +5,9 @@ export(create_bedmeth)
 export(plot_cpgs_coverage)
 export(ICRs_heatmap)
 export(iDMPs)
-<<<<<<< HEAD
 export(plot_line_ICR)
-=======
 export(plot_line_region)
 export(GIMP_app)
->>>>>>> 764a277 (Added Shiny)
 
 # Import functions from other packages
 import(shiny)
@@ -18,7 +15,10 @@ import(DT)
 import(shinydashboard)
 import(tidyverse)
 import(valr)
+import(limma)
 import(readr)
 import(viridisLite)
 import(ggplotify)
+import(reshape2)
+import(ggplot2)
 import(plotly)

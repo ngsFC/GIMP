@@ -24,6 +24,20 @@
 
 ICRs_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_label = "Case", bedmeth = "v1", order_by = "cord", annotation_col = NULL, plot_type = "beta", sd_threshold = 3) {
   
+  # Debug info
+  cat("ICRs_heatmap Debug Info:\n")
+  cat("df_ICR dimensions:", dim(df_ICR), "\n")
+  cat("sampleInfo length:", length(sampleInfo), "\n")
+  cat("sampleInfo values:", paste(sampleInfo, collapse = ", "), "\n")
+  cat("bedmeth:", bedmeth, "\n")
+  cat("plot_type:", plot_type, "\n")
+  
+  # Check if df_ICR is empty
+  if (nrow(df_ICR) == 0 || ncol(df_ICR) == 0) {
+    stop("df_ICR is empty. Please check your data processing steps.")
+  }
+  
+  
   cls_distance = "euclidean" # setting default cluster distance
   # Load BED data based on bedmeth version
   if (bedmeth == "v1" || bedmeth == "450k") {
@@ -71,6 +85,18 @@ ICRs_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_lab
     names(annotation_col[[1]]) <- unique_groups
   }
   
+  available_icrs <- intersect(odr, rownames(df_ICR))
+  df_ICR_filtered <- df_ICR[available_icrs, , drop = FALSE]
+  
+  # Remove rows with all NA values
+  rows_with_data <- apply(df_ICR_filtered, 1, function(x) !all(is.na(x)))
+  df_ICR_filtered <- df_ICR_filtered[rows_with_data, , drop = FALSE]
+  
+  # Check if we have any data left
+  if (nrow(df_ICR_filtered) == 0) {
+    stop("No ICRs with methylation data found. Please check your data.")
+  }
+  
   # Define heatmap palette and breaks
   paletteLength <- 100
   
@@ -79,28 +105,30 @@ ICRs_heatmap <- function(df_ICR, sampleInfo, control_label = "Control", case_lab
     colorPalette <- colorRampPalette(c("#785EF0", "white", "#9a031e"))(paletteLength)
     breaks <- c(seq(0, 0.5, length.out = ceiling(paletteLength / 2) + 1), 
                 seq(0.500001, 1, length.out = floor(paletteLength / 2)))
-    heatmap_data <- df_ICR[odr, ]
+    heatmap_data <- df_ICR_filtered
     main_title <- "Methylation of Imprinted DMRs (Beta)"
     
   } else if (plot_type == "delta") {
     # Calculate DeltaBeta matrix
     control_indices <- which(sampleInfo == control_label)
-    control_means <- rowMeans(df_ICR[, control_indices, drop = FALSE])
-    heatmap_data <- sweep(df_ICR, 1, control_means)
+    control_means <- rowMeans(df_ICR_filtered[, control_indices, drop = FALSE], na.rm = TRUE)
+    heatmap_data <- sweep(df_ICR_filtered, 1, control_means)
     colorPalette <- colorRampPalette(c("blue", "white", "red"))(paletteLength)
     breaks <- seq(-0.5, 0.5, length.out = paletteLength + 1)
     main_title <- "Delta Beta of Imprinted DMRs"
     
   } else if (plot_type == "defect") {
     # Calculate binary defect matrix based on sd_threshold
-    df_mvalues <- log2(df_ICR / (1 - df_ICR))
+    df_mvalues <- log2(df_ICR_filtered / (1 - df_ICR_filtered))
     control_indices <- which(sampleInfo == control_label)
     control_mvalues <- df_mvalues[, control_indices, drop = FALSE]
-    control_means_m <- rowMeans(control_mvalues)
-    control_sds_m <- apply(control_mvalues, 1, sd)
+    control_means_m <- rowMeans(control_mvalues, na.rm = TRUE)
+    control_sds_m <- apply(control_mvalues, 1, sd, na.rm = TRUE)
     upper_threshold <- control_means_m + sd_threshold * control_sds_m
     lower_threshold <- control_means_m - sd_threshold * control_sds_m
     heatmap_data <- (df_mvalues > upper_threshold | df_mvalues < lower_threshold) * 1
+    # Convert NA to 0 for defect matrix
+    heatmap_data[is.na(heatmap_data)] <- 0
     colorPalette <- c("white", "black")
     breaks <- NULL  # No breaks needed for binary data
     main_title <- "Defect Matrix of Imprinted DMRs"
