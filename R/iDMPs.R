@@ -1,3 +1,24 @@
+#' Identify Differentially Methylated Positions in ICRs
+#'
+#' This function identifies differentially methylated positions (DMPs) between
+#' control and case groups using linear modeling and empirical Bayes methods.
+#'
+#' @param data A data frame containing CpG methylation data with annotation columns
+#' @param sampleInfo A factor or character vector indicating sample groups
+#' @param pValueCutoff P-value threshold for significance (default: 0.05)
+#' @return A list containing:
+#'   \item{fit}{Linear model fit object}
+#'   \item{eBayesfit}{Empirical Bayes fit object}
+#'   \item{topDMPs}{Data frame of significant DMPs}
+#'   \item{allResults}{Data frame of all results}
+#'   \item{groupLabels}{Group labels used in analysis}
+#' @examples
+#' \dontrun{
+#' # Run DMP analysis
+#' dmps <- iDMPs(data = ICRcpg, sampleInfo = sample_groups)
+#' significant_dmps <- dmps$topDMPs
+#' }
+#' @export
 iDMPs <- function(data, sampleInfo, pValueCutoff = 0.05) {
   
   sampleInfo <- factor(sampleInfo)
