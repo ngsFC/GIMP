@@ -2,7 +2,9 @@
 % Please edit documentation in R/read_idat_zip.r
 \name{read_idat_zip}
 \alias{read_idat_zip}
-\title{Read IDAT Files from ZIP Archive}
+\title{Read IDAT Files from ZIP Archive
+This function extracts and processes IDAT files from a ZIP archive containing
+IDAT files and a sample sheet, returning a beta value matrix ready for GIMP analysis.}
 \usage{
 read_idat_zip(
   zip_file,
@@ -27,16 +29,17 @@ read_idat_zip(
 
 \item{detection_pval}{P-value threshold for detection (default: 0.01)}
 
-\item{remove_failed_samples}{Remove samples with >10% failed probes (default: TRUE)}
+\item{remove_failed_samples}{Remove samples with >10 percent failed probes (default: TRUE)}
 }
 \value{
 A list containing:
-  \item{beta_matrix}{Beta value matrix ready for GIMP analysis}
-  \item{sample_info}{Sample information from the sample sheet}
-  \item{qc_metrics}{Quality control metrics}
-  \item{failed_samples}{Names of samples that failed QC}
+\item{beta_matrix}{Beta value matrix ready for GIMP analysis}
+\item{sample_info}{Sample information from the sample sheet}
+\item{qc_metrics}{Quality control metrics}
+\item{failed_samples}{Names of samples that failed QC}
 }
 \description{
+Read IDAT Files from ZIP Archive
 This function extracts and processes IDAT files from a ZIP archive containing
 IDAT files and a sample sheet, returning a beta value matrix ready for GIMP analysis.
 }

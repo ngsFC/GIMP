@@ -4,7 +4,7 @@
 \alias{GIMP_app}
 \title{Launch GIMP Shiny Application}
 \usage{
-GIMP_app()
+GIMP_app(max_upload_size_mb = 500)
 }
 \arguments{
 \item{max_upload_size_mb}{Maximum file upload size in MB (default: 500)}

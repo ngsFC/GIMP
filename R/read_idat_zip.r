@@ -1,6 +1,4 @@
 #' Read IDAT Files from ZIP Archive
-#'
-#' @description
 #' This function extracts and processes IDAT files from a ZIP archive containing
 #' IDAT files and a sample sheet, returning a beta value matrix ready for GIMP analysis.
 #'
@@ -10,12 +8,14 @@
 #' @param temp_dir Temporary directory for extraction (default: creates temporary directory)
 #' @param normalize_method Normalization method for minfi ("quantile", "SWAN", "funnorm", "noob")
 #' @param detection_pval P-value threshold for detection (default: 0.01)
-#' @param remove_failed_samples Remove samples with >10% failed probes (default: TRUE)
+#' @param remove_failed_samples Remove samples with >10 percent failed probes (default: TRUE)
+#' 
 #' @return A list containing:
-#'   \item{beta_matrix}{Beta value matrix ready for GIMP analysis}
-#'   \item{sample_info}{Sample information from the sample sheet}
-#'   \item{qc_metrics}{Quality control metrics}
-#'   \item{failed_samples}{Names of samples that failed QC}
+#' \item{beta_matrix}{Beta value matrix ready for GIMP analysis}
+#' \item{sample_info}{Sample information from the sample sheet}
+#' \item{qc_metrics}{Quality control metrics}
+#' \item{failed_samples}{Names of samples that failed QC}
+#' 
 #' @examples
 #' \dontrun{
 #' # Read IDAT files from ZIP
