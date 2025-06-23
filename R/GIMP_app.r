@@ -5,10 +5,12 @@
 #' a graphical user interface for analyzing methylation patterns at Imprinted 
 #' Control Regions (ICRs) without requiring R programming knowledge.
 #'
+#' @param max_upload_size_mb Maximum file upload size in MB (default: 500)
+#' 
 #' @details 
 #' The GIMP Shiny app includes the following features:
 #' \itemize{
-#'   \item Upload methylation beta matrices from CSV files
+#'   \item Upload methylation beta matrices from CSV files or raw IDAT files
 #'   \item Analyze CpG coverage at ICRs
 #'   \item Generate methylation heatmaps (beta, delta, and defect plots)
 #'   \item Identify differentially methylated positions (DMPs)
@@ -24,13 +26,13 @@
 #' \dontrun{
 #' # Launch the GIMP Shiny app
 #' GIMP_app()
+#' 
+#' # Launch with larger upload limit
+#' GIMP_app(max_upload_size_mb = 1000)
 #' }
 #'
 #' @export
-#' @importFrom shiny runApp
-#' @importFrom utils installed.packages
-
-GIMP_app <- function() {
+GIMP_app <- function(max_upload_size_mb = 500) {
   # Check if required packages are installed
   required_packages <- c("shiny", "shinydashboard", "DT", "plotly","ggplot2","reshape2","tidyverse")
   missing_packages <- required_packages[!(required_packages %in% rownames(installed.packages()))]
@@ -50,6 +52,10 @@ GIMP_app <- function() {
   library(plotly)
   library(ggplot2)
   library(reshape2)
+  
+  # Set upload size limit
+  options(shiny.maxRequestSize = max_upload_size_mb * 1024^2)
+  
   # Find the app directory
   appDir <- system.file("shiny", package = "GIMP")
   
@@ -70,5 +76,6 @@ GIMP_app <- function() {
   
   # Launch the app
   message("Launching GIMP Shiny application...")
+  message("Upload size limit set to: ", max_upload_size_mb, " MB")
   shiny::runApp(appDir, display.mode = "normal", launch.browser = TRUE)
 }
