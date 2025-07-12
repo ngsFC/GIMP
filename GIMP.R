@@ -2,7 +2,7 @@
 #install.packages("remotes")
 remove.packages("GIMP")
 rm(list = ls())
-remotes::install_github("ngsFC/GIMP", auth_token = "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")
+remotes::install_github("ngsFC/GIMP")
 
 library(GIMP)
 library(tidyverse)
